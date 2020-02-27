@@ -1,0 +1,2314 @@
+---
+title: "Caracterización Académica y Cualitativa"
+subtitle: "Gimnasio Moderno: 2009-2019"
+author: "Éccole!"
+date:  "`r format(Sys.time(), '%d/%m/%Y')`"
+output:
+  revealjs::revealjs_presentation:
+    self_contained: false
+    reveal_plugins: ["notes", "search"]
+    theme: simple
+    center: true
+    transition: "none"
+    reveal_options:
+      minScale: 1.0
+      maxScale: 1.0
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+library(revealjs)
+library(knitr)
+library(RColorBrewer)
+library(ggplot2)
+library(plyr)
+library(reshape2)
+library(grid)
+library(Eccolepack)
+library(dplyr)
+library(wesanderson)
+library(tidyr)
+library(stringr)
+library(xtable)
+library(plotrix)
+library(gridExtra)
+library(scales)
+library(data.table)
+library(plotly)
+library(htmltools)
+library(htmlwidgets)
+library(stringr)
+library(egg)
+
+
+# cal a: Anglo Americano, Nuevo Colombo Americano, San Patricio, Unidad Pedagógica, Clara Casas, Instituto Alberto Merani
+# Juan Ramón Jiménez
+cala <- c(19810,79806,22004,83758,20149,66845,23895)
+
+# calb: - Anglo Colombiano, Nogales, Campestre, Femenino, Andino, Tilatá, Alcaparros, Campoalegre, Pachas
+calb <- c(19364,55988,25395,22574,19349,106286,95414,43562,19489)
+
+
+# grupos con moderno
+calamod <- c(19810,79806,22004,83758,20149,66845,23895,22848)
+calbmod <- c(19364,55988,25395,22574,19349,106286,95414,43562,19489,22848)
+
+
+# todos
+lista <- graflista <- c(22848,19810,79806,22004,83758,20149,66845,19364,55988,25395,22574,19349,106286,95414,43562,19489,23895)
+
+colegiointeres <- 22848
+
+nombreninio <- nomninio <- nomcoleinteres <- "Gimnasio Moderno"
+
+
+
+
+ locations <- c("~/Desktop/EccoleR/DataFrames/",
+                 "C://Users/julit/Desktop/EccoleR/DataFrames/",
+                 "C://Users/josem/Desktop/EccoleR/DataFrames/"
+  )
+  
+  setwd(Find(dir.exists, locations))
+  
+
+
+list.files(pattern=".RData")
+
+# create a list from these files
+list.filenames<-list.files(pattern=".RData")
+# list.filenames
+
+# create an empty list that will serve as a container to receive the incoming files
+list.data <- list()
+
+# create a loop to read in your data
+for (i in 1:length(list.filenames))
+{
+  list.data[[i]] <- load(list.filenames[i])
+}
+
+
+locations <- c("~/OneDrive/Éccole!/DATOS/ICFES/Saber 11 vs Saber Pro/",
+                 "C://Users/julit/OneDrive/Éccole!/DATOS/ICFES/Saber 11 vs Saber Pro/",
+                 "C://Users/josem/OneDrive/Éccole!/DATOS/ICFES/Saber 11 vs Saber Pro/"
+  )
+  
+  setwd(Find(dir.exists, locations))
+
+load("crucezscores.RData")
+
+load("~/OneDrive/Éccole! New and improved/Colegios/Trabajo/Moderno/Análisis cuantitativo 2019/Datos/crucegm2019.RData")
+
+
+Sys.setenv("plotly_username"="Julitwiga")
+Sys.setenv("plotly_api_key"="oBDpb5isfYwJYpdZIxdw")
+```
+
+## Metodología
+
+- Datos crudos obtenidos del ICFES, alineados 2009-2019. 
+
+- Notas finales promoción 2019 obtenidos del Gimnasio Moderno.
+
+
+## Grupos de referencia
+
+- **Calendario A**: Colegio Anglo Americano, Colegio Nuevo Colombo Americano, Colegio San Patricio, Colegio Unidad Pedagógica,
+Colegio Clara Casas, Instituto Alberto Merani, Juan Ramón Jiménez.
+
+
+- **Calendario B**: Colegio Anglo Colombiano , Colegio Los Nogales, Gimnasio Campestre, Gimnasio Femenino , Colegio Andino, Colegio Tilatá,
+Colegio Hacienda Los Alcaparros, Colegio Campoalegre, Colegio Santa Francisca Romana.
+
+## {data-background="saber359.jpg"}
+
+## Saber 3º,5º,9º 2012-2017
+```{r saber359,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+test <- sab359[is.element(sab359$Codigocolegio,lista),]
+
+    testlc <- test
+
+
+    testlc$Grupo <- ifelse(testlc$Codigocolegio%in%cala, "Calendario A",ifelse(testlc$Codigocolegio%in%calb,"Calendario B","Gimnasio Moderno"))
+
+    testlc$Codigocolegio <- NULL
+    testlc$Codigodane <- NULL
+    testlc$Nomlabel <- NULL
+
+    testpromedio <- aggregate(testlc$value~testlc$Materia+testlc$Grupo+testlc$variable, FUN=mean)
+    names(testpromedio) <- c("Materia","Grupo","variable","value")
+
+
+    testpromedio$Label <- ifelse(testpromedio$value>=5,paste0(sprintf("%.0f", testpromedio$value), "%"),"")
+    testpromedio$Label <- ifelse(testpromedio$variable=="Avanzado",testpromedio$Label, "")
+
+    testpromedio$Materia <- gsub("Matematicas","Matemáticas",testpromedio$Materia)
+    testpromedio$Materia <-  ordered(testpromedio$Materia, levels = c("Lenguaje 9","Matemáticas 9","Ciencias 9","Ciudadanas 9",
+                                                                      "Lenguaje 5","Matemáticas 5","Ciencias 5","Ciudadanas 5",
+                                                                      "Lenguaje 3", "Matemáticas 3"))
+
+
+    testpromedio$Grupo <-as.factor(testpromedio$Grupo)
+    
+    testpromedio$variable <- gsub("Minimo","Mínimo",testpromedio$variable)
+    testpromedio$variable <- ordered(testpromedio$variable,c("Insuficiente","Mínimo","Satisfactorio","Avanzado"))
+    
+   plo359 <- ggplot(testpromedio, aes(x = reorder(Grupo,-value), y = value, fill = variable, label = Label)) +
+      geom_bar(stat = "identity") +
+      facet_wrap(~Materia)+
+      geom_text(size = 3, position = position_stack(vjust = 0.5))+
+      scale_fill_hue(name="Nivel promedio") +
+      labs(x = "", y = "Estudiantes (%)", fill = "Colegio")+
+      geom_vline(xintercept = 3,linetype="dashed",color="orangered")+
+      guides(fill=guide_legend(nrow=4))+
+      theme_bw()+
+      theme(legend.position="bottom")+
+      theme(axis.text.x = element_text(colour = ifelse(levels(testpromedio$Grupo)=="Gimnasio Moderno","orangered","black"),
+                                       size="14", angle=90))+
+      theme(axis.text.y= element_text(colour="black",size="14"))+
+      theme(strip.text.x = element_text(size = 14, face = "bold"))+
+      theme(axis.title.y=element_text(size=14, face="bold"))+
+      theme(axis.title.x=element_text(size=14, face="bold"))+
+      theme(legend.text=element_text(size=14, face="plain"),
+            legend.title=element_text(size=14, face="bold"))
+   
+   ggplotly(plo359)
+
+```
+<aside class="notes" data-markdown>
+        ## Dentro del promedio
+        - Matemáticas 5º 
+        (mejor q femenino, andino, unidad, alcaparros, sp, tilata, cc)
+        
+        ## Debajo del promedio
+        - Lo demás
+        
+        ## Supera mas a menudo a:
+        - Clara Casas (todo)
+        - Unidad (L9, L3, M9, M3, C5, C9)
+        - San Patricio (matemáticas, C5)
+        - Alcaparros (Ciudadanas, C9, M5, M3)
+        - Andino (L3, M5, M3, Ciencias, CU5)
+        - Juan Ramón (L3, M3, M5, C5)
+
+
+## {data-background="saber11.jpg"}
+## Gimnasio Moderno vs. Grupos de referencia - Promedio
+```{r gruposref,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+codcolegiointeres<-colegiointeres
+
+
+makesubdfcomp<-function(df){
+  ddply(df[,!names(df)%in%c("Codigocolegio","Nombre","Calendario","Nomlabel")],
+        c("Año"),  summarise,
+        Promediosin= mean(Promediosin, na.rm=T),
+        Promediocon= mean(Promediocon, na.rm=T),
+        Matematicas= mean(Matematicas, na.rm=T),
+        Cienciasnaturales= mean(Cienciasnaturales, na.rm=T),
+        Lecturacritica= mean(Lecturacritica, na.rm=T),
+        Sociales= mean(Sociales, na.rm=T),
+        Ingles= mean(Ingles, na.rm=T),
+        Numeroestudiantes= mean(Numeroestudiantes, na.rm=T),
+        Ranking=mean(Ranking,na.rm=T),
+        RMate=mean(RMate,na.rm = T),
+        RCnat=mean(RCnat,na.rm = T),
+        RSoci=mean(RSoci,na.rm = T),
+        RIngl=mean(RIngl,na.rm = T),
+        RLcri=mean(RLcri,na.rm = T))
+}
+
+
+top10comp <- rankingscompletosA[rankingscompletosA$Ranking<=10,]
+names(top10comp) [10] <- "Año"
+top10comp$Año <- as.factor(top10comp$Año)
+suma <- aggregate(Promediocon ~ Año, top10comp, mean)
+top10comp <- suma
+top10comp$Conjunto<-"10 mejores Cal A"
+top10comp <- top10comp[,c("Año","Promediocon","Conjunto")]
+
+
+#colegiointeres
+colegiointeresranks<-rankingseccole[rankingseccole$Codigocolegio==codcolegiointeres,]
+colegiointeresranks$Conjunto<- "Gimnasio Moderno"
+colegiointerescomp <- colegiointeresranks[,c("Año","Promediocon","Conjunto")]
+
+#CalA 
+mascCalAdf <- rankingseccole[rankingseccole$Codigocolegio%in%cala,]
+mascCalAcomp <- makesubdfcomp(mascCalAdf)
+mascCalAcomp$Conjunto <- "Colegios Referencia Cal A"
+mascCalAcomp <- mascCalAcomp[,c("Año","Promediocon","Conjunto")]
+
+#CalB
+refcompdf<-rankingseccole[rankingseccole$Codigocolegio%in%calb,]
+refcompcomp<- makesubdfcomp(refcompdf)
+refcompcomp$Conjunto<-"Colegios Referencia Cal B"
+refcompcomp <- refcompcomp[,c("Año","Promediocon","Conjunto")]
+
+comparativos<-rbind(top10comp,colegiointerescomp,refcompcomp,mascCalAcomp)
+comparativos$Año <- as.numeric(as.character(comparativos$Año))
+comparativos <- comparativos[comparativos$Año>=2015,]
+comparativos$Año <- as.factor(comparativos$Año)
+comparativos$Conjunto <- as.factor(comparativos$Conjunto)
+
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(comparativos$Nomlabel),
+c("10 mejores Cal A","Colegios Referencia Cal A","Gimnasio Moderno","Colegios Referencia Cal B")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("10 mejores Cal A"="#0059a9")) #azul
+values = c(values, c("Gimnasio Moderno"="#e78122")) #anaranjado
+values = c(values, c("Colegios Referencia Cal B"="#729742")) #verde
+values = c(values, c("Colegios Referencia Cal A"="#ffdb5e")) #amarillo
+
+comparativos$Conjunto<-factor(comparativos$Conjunto, levels=c("10 mejores Cal A", "Colegios Referencia Cal B",
+                                                              "Colegios Referencia Cal A", "Gimnasio Moderno"), ordered = TRUE)
+
+names(comparativos) <- c("Año","Promedio","Conjunto")
+
+vsref <- ggplot(comparativos,aes(x=Año,y=Promedio,color=Conjunto,group=Conjunto))+
+geom_line(size=3)+
+scale_y_continuous(breaks=seq(69,80,1))+
+scale_colour_manual(name= "Colegio", values=values)+
+labs(x="Año",y="Promedio con inglés",color="Grupo de referencia")+
+theme_bw()+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_text(margin = margin(t = 0, r = 20, b = 0, l = 0)))
+
+ggplotly(vsref)
+    
+```
+
+
+
+## GM vs.Top 10 calendario A - Ranking
+```{r top10,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+rankingseccole$Numeroestudiantes <- as.numeric(rankingseccole$Numeroestudiantes)
+
+
+
+#colegio interes
+codcolegiointeres <- colegiointeres
+
+makesubdfcomp<-function(df){
+  ddply(df[,!names(df)%in%c("Codigocolegio","Nombre","Calendario","Nomlabel")],
+        c("Año"),  summarise,
+        Promediosin= mean(Promediosin, na.rm=T),
+        Promediocon= mean(Promediocon, na.rm=T),
+        Matematicas= mean(Matematicas, na.rm=T),
+        Cienciasnaturales= mean(Cienciasnaturales, na.rm=T),
+        Lecturacritica= mean(Lecturacritica, na.rm=T),
+        Sociales= mean(Sociales, na.rm=T),
+        Ingles= mean(Ingles, na.rm=T),
+        Numeroestudiantes= mean(Numeroestudiantes, na.rm=T),
+        Ranking=mean(Ranking,na.rm=T),
+        RMate=mean(RMate,na.rm = T),
+        RCnat=mean(RCnat,na.rm = T),
+        RSoci=mean(RSoci,na.rm = T),
+        RIngl=mean(RIngl,na.rm = T),
+        RLcri=mean(RLcri,na.rm = T))
+}
+
+
+top10comp <- rankingscompletosA[rankingscompletosA$Ranking<=10&rankingscompletosA$Calendario=="A",]
+top10comp$Numeroestudiantes <- as.numeric(top10comp$Numeroestudiantes)
+top10comp <- top10comp[,c("Anio","Promediosin","Promediocon","Matematicas","Sociales","Ingles","Lecturacritica",
+                           "Cienciasnaturales", "Numeroestudiantes","Ranking","RMate","RCnat","RSoci","RIngl","RLcri")]
+
+names(top10comp)[1] <- "Año"
+top10comp$Promediosin <- as.numeric(top10comp$Promediosin)
+
+#
+test <- top10comp %>% group_by(Año) %>% summarise_all(funs(mean))
+test$Conjunto <- paste("10 mejores Cal","A")
+test <- test[test$Año>=2009,]
+
+#colegiointeres
+colegiointeresranks <- rankingseccole[rankingseccole$Codigocolegio==codcolegiointeres,]
+colegiointerescomp <- colegiointeresranks[,!names(colegiointeresranks)%in%c("Codigocolegio","Nombre","Calendario","Nomlabel")]
+colegiointerescomp$Conjunto <- nomcoleinteres
+colegiointerescomp$Departamento <- NULL
+
+
+comparativos <- rbind(colegiointerescomp,test)
+
+
+comparativos$Conjunto <- as.factor(comparativos$Conjunto)
+
+
+#personalizar color 
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(comparativos$Conjunto), c("10 mejores Cal A", "Gimnasio Moderno")))
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("10 mejores Cal A"="#0059a9")) #azul
+values = c(values, c("Gimnasio Moderno"="#f38220")) #color colegio!
+
+
+comparativos$Conjunto <- as.factor(comparativos$Conjunto)
+comparativos$Año <- as.numeric(comparativos$Año)
+
+
+comparativos <- comparativos[,c("Año","Ranking","RMate","RCnat","RSoci","RIngl","RLcri","Conjunto")]
+meltcomp <- melt(comparativos,id.vars=c("Año","Conjunto"))
+
+
+
+
+meltcomp$variable <- revalue(meltcomp$variable,c("Ranking"="Promedio",
+                                                 "RMate"="Matemáticas",
+                                                 "RCnat"="Ciencias naturales",
+                                                 "RSoci"="Sociales",
+                                                 "RIngl"="Inglés",
+                                                 "RLcri"="Lectura crítica"))
+
+
+print(ggplot(data = transform(meltcomp,
+      variable=factor(variable,levels=c("Inglés","Sociales","Promedio","Matemáticas","Lectura crítica","Ciencias naturales"))), aes(x=Año, y=value)) +
+  geom_line(aes(colour=Conjunto), size=2)+
+  scale_colour_manual(name= "", values=values)+
+  theme_bw()+
+  facet_wrap(~variable)+
+  ylab("Puesto promedio")+
+  scale_x_continuous(breaks=c(2009:2019),labels=c(9:19), name="Año")+
+  scale_y_reverse()+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=12, face="plain"),
+        legend.title=element_text(size=12, face="bold"),
+        axis.title.y=element_blank(),
+        axis.text.x=element_text(size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_blank())+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+      coord_polar())
+    
+```
+
+
+## Puntaje Global 2018
+```{r pglobal,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+compuestoscoles <- subset(pglobal, Codigocolegio%in%lista)
+    puestos <- compuestoscoles[,c("Codigocolegio","Global","Anio","Type")]
+    mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
+
+    puestos <- merge(puestos,mininom, by="Codigocolegio")
+    puestos$Global <- as.numeric(puestos$Global)
+
+
+    df <- puestos
+    df$Type <- ordered(df$Type, levels = c("cadetblue1", "seagreen3", "orange"))
+    df$Type <- revalue(df$Type,c("cadetblue1"="MADE", "seagreen3"="Otras", "orange"="Ninguna"))
+    # wrap nombres
+    # df$Nombreest <- str_wrap(df$Nombreest, width = 10)
+
+    anios <- c(2018)
+    df <- df[df$Anio%in%anios,]
+    names(df) <- c("Codigocolegio", "Global","Anio","Carrera","Colegio")
+
+
+    df$Colegio <- as.factor(df$Colegio)
+    
+    # ordenar Nomlabel para que Pachas quede primero
+    df$Colegio <- as.factor(df$Colegio)
+    df$Colegio <- ordered(df$Colegio,
+                            levels = c("Gimnasio Moderno","Instituto Alberto Merani","Nuevo Colombo Americano","Anglo Americano",
+                                           "Juan Ramón Jiménez","San Patricio","Clara Casas","Unidad Pedagógica",
+                                         "Gimnasio Femenino","Los Nogales","Santa Francisca Romana","Campoalegre",
+                                         "Tilatá","Los Alcaparros","Gimnasio Campestre","Anglo Colombiano", "Andino"))
+    
+    
+    plot_ly(data = df, x = ~Colegio, y = ~Global,color = ~Carrera,type="scatter", marker = list(size = 10,alpha=0.5))%>% layout(hovermode = 'closest')
+    
+```
+
+<aside class="notes" data-markdown>
+       ## Toda la promoción del 2019 podría ingresar a los Andes.
+          - Equivalentes a mayoría en A, menos Clara Casas y Unidad
+          - Equivalentes a mayoría en B, menos Anglo y Andino
+
+       ##63 por ciento a carreras más altas
+          - 10º entre 17 colegios de referencia
+          - Superan a Clara Casas, Unidad, Femenino, Tilatá, Alcaparros, Anglo C. y Andino
+    </aside>
+
+
+## Percentiles 2010-2019
+```{r percentiles,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "left", cache=TRUE,fig.width=15}
+compuestoscoles <- subset(percentileccole, Codigocolegio%in%lista)
+    puestos<-compuestoscoles[,c("Codigocolegio","Anio", "Indiptil")]
+
+    puestos$Type <- ifelse(puestos$Indiptil<=25 ,"<25",
+                                   ifelse(puestos$Indiptil<=50,"25-50",
+                                          ifelse(puestos$Indiptil<=75,"50-75",
+                                                 ifelse(puestos$Indiptil<=92,"75-92",
+                                                        "93-100"))))
+    
+    suma <- puestos %>%
+    group_by(Codigocolegio,Anio,Type) %>% #primero colegio, luego área, o si no hace el cálculo mal
+    summarise(n = n()) %>%
+    mutate(percent = (n/sum(n))*100) 
+    
+  
+
+    #de crucecodigos salen los nomlabels
+    mininom <- crucecodigos[crucecodigos$Codigocolegio%in%lista,c("Codigocolegio","Nomlabel")]
+    puestos <- merge(suma,mininom,by="Codigocolegio",all.x=T)
+
+    
+    puestos$Nomlabel <- as.factor(puestos$Nomlabel)
+    puestos$Nomlabel <- ordered(puestos$Nomlabel,
+                            levels = c("Gimnasio Moderno","Anglo Americano","Instituto Alberto Merani",
+                                       "Nuevo Colombo Americano","San Patricio",
+                                       "Los Nogales","Campoalegre","Santa Francisca Romana","Juan Ramón Jiménez","Clara Casas",
+                                       "Gimnasio Femenino","Tilatá","Los Alcaparros","Gimnasio Campestre",
+                                       "Anglo Colombiano", "Andino","Unidad Pedagógica"))
+    
+    names(puestos) <- c("Codigocolegio",  "Año","Percentil","n","Porcentaje","Colegio")
+    
+    puestos$Año <- as.factor(puestos$Año)
+    puestos$Año <- gsub(20,"",puestos$Año)
+
+    
+    percentiles <- ggplot(puestos, aes(x = Año, y = Porcentaje, fill = Percentil, label=Porcentaje)) +
+    geom_bar(stat = "identity", width = .7) +
+    facet_wrap(~Colegio)+
+    ylab("Porcentaje de estudiantes")+
+    xlab("Año")+
+    theme_bw()+
+    theme(legend.position="top")+
+    scale_fill_brewer(palette="Spectral")+
+    theme(axis.text.y = element_text(colour="black",size="18"))+
+    theme(axis.text.x= element_text(colour="black",size="12"))+
+    theme(axis.title.x=element_text(size=12, lineheight=.9, vjust=0, face = "bold"))+
+    theme(axis.title.y=element_text(size=12, lineheight=.9, vjust=1, face = "bold"))+
+    theme(legend.text=element_text(size=12),
+          legend.title=element_text(size=12))
+    
+    ggplotly(percentiles)
+
+```
+
+<aside class="notes" data-markdown>
+       ## Históricamente
+          - 50 por ciento por encima del percentil 90 (6º puesto, por encima del promedio)
+          - 100 por ciento por encima del percentil 50
+
+       ## 2019
+          - 80 por ciento por encima del percentil 90 (4º puesto, por encima del promedio)
+          - 100 por ciento por encima del percentil 50
+    </aside>
+
+## Calendario A - puesto promedio
+```{r saber11promcala, echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("Ranking","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Anglo Americano","Clara Casas", "Gimnasio Moderno", "Instituto Alberto Merani","Nuevo Colombo Americano","San Patricio",    "Unidad Pedagógica","Juan Ramón Jiménez")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Anglo Americano"="#ccffe6")) #verde pastel
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+values = c(values, c("Clara Casas"="#9a72ff")) #morado
+values = c(values, c("Instituto Alberto Merani"="#ffdb5e")) #amarillo
+values = c(values, c("Nuevo Colombo Americano"="#92e4ff")) #azul cielo
+values = c(values, c("San Patricio"="#8d0064")) #morado
+values = c(values, c("Unidad Pedagógica"="#ffa481")) #beige
+values = c(values, c("Juan Ramón Jiménez"="#82c928")) #verde claro
+
+
+
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c(c("Gimnasio Moderno","Anglo Americano",
+                                         "Nuevo Colombo Americano","Instituto Alberto Merani","Juan Ramón Jiménez","Unidad Pedagógica","San Patricio","Clara Casas")))
+
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Promedio","Puesto")
+
+
+meltcomprankings$Promedio <- gsub("Ranking","Puesto promedio",meltcomprankings$Promedio)
+
+#ggplot
+promcala <- ggplot(meltcomprankings, aes(x=Año, y=Puesto,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2009:2019, labels = 9:19,name="Año")+
+  scale_y_reverse(breaks=c(1,30,60,90,120,150,180,210,240,270,300,330,360,390,420,450,480,510,540,570,600,630,660,690,720,750,780,810))+
+  facet_wrap(~Promedio)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+           # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puesto promedio simple (con inglés)")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+
+ggplotly(promcala)
+```
+
+
+<aside class="notes" data-markdown>
+       ## Puesto 40 / 13189
+          - > que Clara Casas, Unidad
+          - Mejor ranking histórico
+    </aside>
+
+
+
+## Calendario A - puesto inglés
+```{r saber11ingcala, echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RIngl","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Anglo Americano","Clara Casas", "Gimnasio Moderno", "Instituto Alberto Merani","Nuevo Colombo Americano","San Patricio",    "Unidad Pedagógica","Juan Ramón Jiménez")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Anglo Americano"="#ccffe6")) #verde pastel
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+values = c(values, c("Clara Casas"="#9a72ff")) #morado
+values = c(values, c("Instituto Alberto Merani"="#ffdb5e")) #amarillo
+values = c(values, c("Nuevo Colombo Americano"="#92e4ff")) #azul cielo
+values = c(values, c("San Patricio"="#8d0064")) #morado
+values = c(values, c("Unidad Pedagógica"="#ffa481")) #beige
+values = c(values, c("Juan Ramón Jiménez"="#82c928")) #verde claro
+
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c(c("Gimnasio Moderno","Anglo Americano",
+                                         "Nuevo Colombo Americano","Instituto Alberto Merani","Juan Ramón Jiménez","Unidad Pedagógica","San Patricio","Clara Casas")))
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Promedio","Puesto")
+meltcomprankings$Promedio <- gsub("RIngl","Puesto promedio en inglés",meltcomprankings$Promedio)
+
+
+#ggplot
+inga <- ggplot(meltcomprankings, aes(x=Año, y=Puesto,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2009:2019, labels = 9:19,name="Año")+
+  scale_y_reverse(breaks=c(1,30,60,90,120,150,180,210,240,270,300,330,360,390,420,450,480,510,540,570,600,630,660,690,720,750,780,810))+
+  facet_wrap(~Promedio)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+        # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puesto en inglés")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+
+ggplotly(inga)
+```
+
+<aside class="notes" data-markdown>
+       ## Puesto 11 / 13189
+          - > que Clara Casas, Unidad, San Patricio, Merani, Juan Ramón
+          - Mejor ranking histórico
+    </aside>
+
+
+## Calendario A - puesto lectura crítica
+```{r saber11lccala,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RLcri","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Anglo Americano","Clara Casas", "Gimnasio Moderno", "Instituto Alberto Merani","Nuevo Colombo Americano","San Patricio",    "Unidad Pedagógica","Juan Ramón Jiménez")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Anglo Americano"="#ccffe6")) #verde pastel
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+values = c(values, c("Clara Casas"="#9a72ff")) #morado
+values = c(values, c("Instituto Alberto Merani"="#ffdb5e")) #amarillo
+values = c(values, c("Nuevo Colombo Americano"="#92e4ff")) #azul cielo
+values = c(values, c("San Patricio"="#8d0064")) #morado
+values = c(values, c("Unidad Pedagógica"="#ffa481")) #beige
+values = c(values, c("Juan Ramón Jiménez"="#82c928")) #verde claro
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c(c("Gimnasio Moderno","Anglo Americano",
+                                         "Nuevo Colombo Americano","Instituto Alberto Merani","Juan Ramón Jiménez","Unidad Pedagógica","San Patricio","Clara Casas")))
+
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Promedio","Puesto")
+meltcomprankings$Promedio <- gsub("RLcri","Puesto promedio en lectura crítica",meltcomprankings$Promedio)
+
+#ggplot
+lecta <- ggplot(meltcomprankings, aes(x=Año, y=Puesto,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2009:2019, labels = 9:19,name="Año")+
+  scale_y_reverse(breaks=c(1,30,60,90,120,150,180,210,240,270,300,330,360,390,420,450,480,510,540,570,600,630,660,690,720,750,780,810,840,870,900,930,970,1000,1030,
+                           1060,1090))+
+  facet_wrap(~Promedio)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+         # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puesto en lectura crítica")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+
+ggplotly(lecta)
+```
+
+
+<aside class="notes" data-markdown>
+       ## Puesto 93 / 13189
+          - > que Clara Casas, Unidad
+          - Mejor ranking histórico
+    </aside>
+
+## Calendario A - puesto matemáticas
+```{r saber11matecala,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RMate","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Anglo Americano","Clara Casas", "Gimnasio Moderno", "Instituto Alberto Merani","Nuevo Colombo Americano","San Patricio",    "Unidad Pedagógica","Juan Ramón Jiménez")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Anglo Americano"="#ccffe6")) #verde pastel
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+values = c(values, c("Clara Casas"="#9a72ff")) #morado
+values = c(values, c("Instituto Alberto Merani"="#ffdb5e")) #amarillo
+values = c(values, c("Nuevo Colombo Americano"="#92e4ff")) #azul cielo
+values = c(values, c("San Patricio"="#8d0064")) #morado
+values = c(values, c("Unidad Pedagógica"="#ffa481")) #beige
+values = c(values, c("Juan Ramón Jiménez"="#82c928")) #verde claro
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c(c("Gimnasio Moderno","Anglo Americano",
+                                         "Nuevo Colombo Americano","Instituto Alberto Merani","Juan Ramón Jiménez","Unidad Pedagógica","San Patricio","Clara Casas")))
+
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Promedio","Puesto")
+meltcomprankings$Promedio <- gsub("RMate","Puesto promedio en matemáticas",meltcomprankings$Promedio)
+
+#ggplot
+matea <- ggplot(meltcomprankings, aes(x=Año, y=Puesto,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2009:2019, labels = 9:19,name="Año")+
+  scale_y_reverse(breaks=c(1,100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800))+
+  facet_wrap(~Promedio)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+        # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puesto en matemáticas")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+
+
+ggplotly(matea)
+```
+
+<aside class="notes" data-markdown>
+       ## Puesto 85 / 13189
+          - > que Clara Casas, Unidad
+          - Mejor ranking histórico
+    </aside>
+
+## Calendario A - puesto ciencias
+```{r saber11ciencala,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RCnat","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Anglo Americano","Clara Casas", "Gimnasio Moderno", "Instituto Alberto Merani","Nuevo Colombo Americano","San Patricio",    "Unidad Pedagógica","Juan Ramón Jiménez")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Anglo Americano"="#ccffe6")) #verde pastel
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+values = c(values, c("Clara Casas"="#9a72ff")) #morado
+values = c(values, c("Instituto Alberto Merani"="#ffdb5e")) #amarillo
+values = c(values, c("Nuevo Colombo Americano"="#92e4ff")) #azul cielo
+values = c(values, c("San Patricio"="#8d0064")) #morado
+values = c(values, c("Unidad Pedagógica"="#ffa481")) #beige
+values = c(values, c("Juan Ramón Jiménez"="#82c928")) #verde claro
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c(c("Gimnasio Moderno","Anglo Americano",
+                                         "Nuevo Colombo Americano","Instituto Alberto Merani","Juan Ramón Jiménez","Unidad Pedagógica","San Patricio","Clara Casas")))
+
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Promedio","Puesto")
+meltcomprankings$Promedio <- gsub("RCnat","Puesto promedio en ciencias naturales",meltcomprankings$Promedio)
+
+#ggplot
+ciencia <- ggplot(meltcomprankings, aes(x=Año, y=Puesto,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2009:2019, labels = 9:19,name="Año")+
+   scale_y_reverse(breaks=c(1,100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800))+
+  facet_wrap(~Promedio)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+         # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puesto en ciencias")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+
+ggplotly(ciencia)
+```
+
+<aside class="notes" data-markdown>
+       ## Puesto 92 / 13189
+          - > que Clara Casas, Unidad
+          - Mejor ranking histórico
+    </aside>
+
+
+## Calendario A - puesto sociales
+```{r saber11socicala,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RSoci","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Anglo Americano","Clara Casas", "Gimnasio Moderno", "Instituto Alberto Merani","Nuevo Colombo Americano","San Patricio",    "Unidad Pedagógica","Juan Ramón Jiménez")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Anglo Americano"="#ccffe6")) #verde pastel
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+values = c(values, c("Clara Casas"="#9a72ff")) #morado
+values = c(values, c("Instituto Alberto Merani"="#ffdb5e")) #amarillo
+values = c(values, c("Nuevo Colombo Americano"="#92e4ff")) #azul cielo
+values = c(values, c("San Patricio"="#8d0064")) #morado
+values = c(values, c("Unidad Pedagógica"="#ffa481")) #beige
+values = c(values, c("Juan Ramón Jiménez"="#82c928")) #verde claro
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c(c("Gimnasio Moderno","Anglo Americano",
+                                         "Nuevo Colombo Americano","Instituto Alberto Merani","Juan Ramón Jiménez","Unidad Pedagógica","San Patricio","Clara Casas")))
+
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Promedio","Puesto")
+meltcomprankings$Promedio <- gsub("RSoci","Puesto promedio en sociales",meltcomprankings$Promedio)
+
+#ggplot
+socicala <- ggplot(meltcomprankings, aes(x=Año, y=Puesto,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2009:2019, labels = 9:19,name="Año")+
+  scale_y_reverse(breaks=c(1,100,200,300,400,500,600,700,800,900,1000,1100,1200,1300,1400,1500,1600,1700,1800))+
+  facet_wrap(~Promedio)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+          # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puesto en sociales")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+
+
+ggplotly(socicala)
+
+
+```
+
+<aside class="notes" data-markdown>
+       ## Puesto 55 / 13189
+          - > que Clara Casas, Unidad
+         
+    </aside>
+
+
+## **CALENDARIO B**
+
+Dado que las pruebas de calendario A y B son diferentes, y por lo tanto, están en "rankings" diferentes, se comparará al Gimnasio Moderno contra los colegios de calendario B de acuerdo a su promedio en las pruebas. 
+
+## Calendario B - promedio
+```{r saber11promcalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Promediocon","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Los Nogales","Campoalegre","Santa Francisca Romana","Gimnasio Campestre","Los Alcaparros","Andino", "Anglo Colombiano","Tilatá", "Gimnasio Femenino","Gimnasio Moderno")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Andino"="#4fff5e")) #verde brillante
+values = c(values, c("Anglo Colombiano"="#86a900")) #verde oliva
+values = c(values, c("Gimnasio Campestre"="#ff2936")) #rojo
+values = c(values, c("Gimnasio Femenino"="#5499ff")) #azul
+values = c(values, c("Los Nogales"="#aa4300")) #café
+values = c(values, c("Los Alcaparros"="#00733c")) #verde pino
+values = c(values, c("Tilatá"="#ff7d98")) #rosado
+values = c(values, c("Campoalegre"="#004056")) #azul medianoche
+values = c(values, c("Santa Francisca Romana"="#f9c227")) #anaranjada
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+
+
+
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c("Gimnasio Moderno","Los Nogales","Santa Francisca Romana","Campoalegre","Gimnasio Campestre","Los Alcaparros","Andino","Anglo Colombiano","Tilatá","Gimnasio Femenino"))
+
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Categoria","Promedio")
+
+meltcomprankings$Categoria <- gsub("Promediocon","Promedio simple",meltcomprankings$Categoria)
+
+meltcomprankings <- meltcomprankings[meltcomprankings$Año>=2015,]
+
+#ggplot
+promb <- ggplot(meltcomprankings, aes(x=Año, y=Promedio,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2015:2019, labels = 15:19,name="Año")+
+  facet_wrap(~Categoria)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+         # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  labs(y="Promedio simple (con inglés)")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+
+ggplotly(promb)
+
+
+```
+
+
+<aside class="notes" data-markdown>
+       ## Mejor que:
+          - Femenino
+          - Tilatá
+         
+    </aside>
+
+
+## Calendario B - promedio inglés
+```{r saber11ingcalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Ingles","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Los Nogales","Campoalegre","Santa Francisca Romana","Gimnasio Campestre","Los Alcaparros","Andino", "Anglo Colombiano","Tilatá", "Gimnasio Femenino","Gimnasio Moderno")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Andino"="#4fff5e")) #verde brillante
+values = c(values, c("Anglo Colombiano"="#86a900")) #verde oliva
+values = c(values, c("Gimnasio Campestre"="#ff2936")) #rojo
+values = c(values, c("Gimnasio Femenino"="#5499ff")) #azul
+values = c(values, c("Los Nogales"="#aa4300")) #café
+values = c(values, c("Los Alcaparros"="#00733c")) #verde pino
+values = c(values, c("Tilatá"="#ff7d98")) #rosado
+values = c(values, c("Campoalegre"="#004056")) #azul medianoche
+values = c(values, c("Santa Francisca Romana"="#f9c227")) #anaranjada
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+
+
+
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c("Gimnasio Moderno","Los Nogales","Santa Francisca Romana","Campoalegre","Gimnasio Campestre","Los Alcaparros","Andino","Anglo Colombiano","Tilatá","Gimnasio Femenino"))
+
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Categoria","Promedio")
+meltcomprankings$Categoria <- gsub("Ingles","Promedio de inglés",meltcomprankings$Categoria)
+
+
+meltcomprankings <- meltcomprankings[meltcomprankings$Año>=2015,]
+
+#ggplot
+calbing <- ggplot(meltcomprankings, aes(x=Año, y=Promedio,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2015:2019, labels = 15:19,name="Año")+
+  facet_wrap(~Categoria)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+          # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puntaje promedio en inglés")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_blank(),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+
+
+ggplotly(calbing)
+
+```
+
+
+<aside class="notes" data-markdown>
+       ## Mejor que:
+          - Femenino
+          - Campestre
+          - Andino
+         
+    </aside>
+
+
+## Calendario B - promedio lectura crítica
+```{r saber11lccalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Lecturacritica","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Los Nogales","Campoalegre","Santa Francisca Romana","Gimnasio Campestre","Los Alcaparros","Andino", "Anglo Colombiano","Tilatá", "Gimnasio Femenino","Gimnasio Moderno")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Andino"="#4fff5e")) #verde brillante
+values = c(values, c("Anglo Colombiano"="#86a900")) #verde oliva
+values = c(values, c("Gimnasio Campestre"="#ff2936")) #rojo
+values = c(values, c("Gimnasio Femenino"="#5499ff")) #azul
+values = c(values, c("Los Nogales"="#aa4300")) #café
+values = c(values, c("Los Alcaparros"="#00733c")) #verde pino
+values = c(values, c("Tilatá"="#ff7d98")) #rosado
+values = c(values, c("Campoalegre"="#004056")) #azul medianoche
+values = c(values, c("Santa Francisca Romana"="#f9c227")) #anaranjada
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+
+
+
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c("Gimnasio Moderno","Los Nogales","Santa Francisca Romana","Campoalegre","Gimnasio Campestre","Los Alcaparros","Andino","Anglo Colombiano","Tilatá","Gimnasio Femenino"))
+
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Categoria","Promedio")
+meltcomprankings$Categoria <- gsub("Lecturacritica","Promedio de lectura crítica",meltcomprankings$Categoria)
+
+meltcomprankings <- meltcomprankings[meltcomprankings$Año>=2015,]
+
+
+#ggplot
+lccala <- ggplot(meltcomprankings, aes(x=Año, y=Promedio,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2015:2019, labels = 15:19,name="Año")+
+  facet_wrap(~Categoria)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+        # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puntaje promedio en lectura crítica")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+
+ggplotly(lccala)
+
+```
+
+<aside class="notes" data-markdown>
+       ## Mejor que:
+          - Anglo Colombiano
+          
+      ## Mejor promedio histórico
+         
+    </aside>
+
+
+## Calendario B - promedio matemáticas
+```{r saber11matecalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Matematicas","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Los Nogales","Campoalegre","Santa Francisca Romana","Gimnasio Campestre","Los Alcaparros","Andino", "Anglo Colombiano","Tilatá", "Gimnasio Femenino","Gimnasio Moderno")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Andino"="#4fff5e")) #verde brillante
+values = c(values, c("Anglo Colombiano"="#86a900")) #verde oliva
+values = c(values, c("Gimnasio Campestre"="#ff2936")) #rojo
+values = c(values, c("Gimnasio Femenino"="#5499ff")) #azul
+values = c(values, c("Los Nogales"="#aa4300")) #café
+values = c(values, c("Los Alcaparros"="#00733c")) #verde pino
+values = c(values, c("Tilatá"="#ff7d98")) #rosado
+values = c(values, c("Campoalegre"="#004056")) #azul medianoche
+values = c(values, c("Santa Francisca Romana"="#f9c227")) #anaranjada
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+
+
+
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c("Gimnasio Moderno","Los Nogales","Santa Francisca Romana","Campoalegre","Gimnasio Campestre","Los Alcaparros","Andino","Anglo Colombiano","Tilatá","Gimnasio Femenino"))
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Categoria","Promedio")
+meltcomprankings$Categoria <- gsub("Matematicas","Promedio de matemáticas",meltcomprankings$Categoria)
+
+meltcomprankings <- meltcomprankings[meltcomprankings$Año>=2015,]
+
+
+#ggplot
+calbmate <- ggplot(meltcomprankings, aes(x=Año, y=Promedio,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2015:2019, labels = 15:19,name="Año")+
+  facet_wrap(~Categoria)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+          # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puntaje promedio en matemáticas")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+  
+ggplotly(calbmate)  
+
+```
+
+<aside class="notes" data-markdown>
+       ## Mejor que:
+          - Femenino
+          - Tilatá
+         
+    </aside>
+
+## Calendario B - promedio ciencias naturales
+```{r saber11ciencalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Cienciasnaturales","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Los Nogales","Campoalegre","Santa Francisca Romana","Gimnasio Campestre","Los Alcaparros","Andino", "Anglo Colombiano","Tilatá", "Gimnasio Femenino","Gimnasio Moderno")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Andino"="#4fff5e")) #verde brillante
+values = c(values, c("Anglo Colombiano"="#86a900")) #verde oliva
+values = c(values, c("Gimnasio Campestre"="#ff2936")) #rojo
+values = c(values, c("Gimnasio Femenino"="#5499ff")) #azul
+values = c(values, c("Los Nogales"="#aa4300")) #café
+values = c(values, c("Los Alcaparros"="#00733c")) #verde pino
+values = c(values, c("Tilatá"="#ff7d98")) #rosado
+values = c(values, c("Campoalegre"="#004056")) #azul medianoche
+values = c(values, c("Santa Francisca Romana"="#f9c227")) #anaranjada
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+
+
+
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c("Gimnasio Moderno","Los Nogales","Santa Francisca Romana","Campoalegre","Gimnasio Campestre","Los Alcaparros","Andino","Anglo Colombiano","Tilatá","Gimnasio Femenino"))
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Categoria","Promedio")
+meltcomprankings$Categoria <- gsub("Cienciasnaturales","Promedio de ciencias",meltcomprankings$Categoria)
+
+meltcomprankings <- meltcomprankings[meltcomprankings$Año>=2015,]
+
+
+#ggplot
+calbcien <- ggplot(meltcomprankings, aes(x=Año, y=Promedio,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2015:2019, labels = 15:19,name="Año")+
+  facet_wrap(~Categoria)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+          # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puntaje promedio en ciencias")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+  
+ggplotly(calbcien)  
+
+```
+
+<aside class="notes" data-markdown>
+       ## Mejor que:
+          - Femenino
+          - Tilatá
+          - Anglo Colombiano
+         
+    </aside>
+
+## Calendario B - promedio sociales
+```{r saber11socicalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Sociales","Año","Nomlabel","Calendario")]
+
+meltcomprankings <- melt(comprankings, id = c("Año","Nomlabel","Calendario"))
+colnames(meltcomprankings) [1] <- "Año"
+colnames(meltcomprankings) [4] <- "Promedio"
+colnames(meltcomprankings) [5] <- "Puesto"
+
+#personalizar color del colegio
+gg_color_hue <- function(n) {
+  hues = seq(1, 150, length=n+1)
+  hcl(h=hues, l=65, c=100)[1:n]
+}
+
+# Dynamically generate default color values, but have Paid="black".
+adj_names = sort(setdiff(unique(meltcomprankings$Nomlabel),
+c("Los Nogales","Campoalegre","Santa Francisca Romana","Gimnasio Campestre","Los Alcaparros","Andino", "Anglo Colombiano","Tilatá", "Gimnasio Femenino","Gimnasio Moderno")))
+
+values = gg_color_hue(length(adj_names))
+names(values) = adj_names
+values = c(values, c("Andino"="#4fff5e")) #verde brillante
+values = c(values, c("Anglo Colombiano"="#86a900")) #verde oliva
+values = c(values, c("Gimnasio Campestre"="#ff2936")) #rojo
+values = c(values, c("Gimnasio Femenino"="#5499ff")) #azul
+values = c(values, c("Los Nogales"="#aa4300")) #café
+values = c(values, c("Los Alcaparros"="#00733c")) #verde pino
+values = c(values, c("Tilatá"="#ff7d98")) #rosado
+values = c(values, c("Campoalegre"="#004056")) #azul medianoche
+values = c(values, c("Santa Francisca Romana"="#f9c227")) #anaranjada
+values = c(values, c("Gimnasio Moderno"="#000000")) #negro
+
+
+
+
+# ordenar Nomlabel para que Pachas quede primero
+meltcomprankings$Nomlabel <- as.factor(meltcomprankings$Nomlabel)
+meltcomprankings$Nomlabel <- ordered(meltcomprankings$Nomlabel,
+                            levels = c("Gimnasio Moderno","Los Nogales","Santa Francisca Romana","Campoalegre","Gimnasio Campestre","Los Alcaparros","Andino","Anglo Colombiano","Tilatá","Gimnasio Femenino"))
+
+meltcomprankings$Calendario <- as.factor(meltcomprankings$Calendario)
+
+names(meltcomprankings) <- c("Año","Colegio","Calendario","Categoria","Promedio")
+meltcomprankings$Categoria <- gsub("Sociales","Promedio de sociales",meltcomprankings$Categoria)
+
+meltcomprankings <- meltcomprankings[meltcomprankings$Año>=2015,]
+
+
+#ggplot
+calbsoci <- ggplot(meltcomprankings, aes(x=Año, y=Promedio,colour=Colegio))+
+  geom_line(size=3,alpha=0.8)+
+  scale_x_continuous(breaks=2015:2019, labels = 15:19,name="Año")+
+  facet_wrap(~Categoria)+
+  geom_point(shape = 19,         # Hollow squares
+               size = 5)+          # Large points
+  theme_bw()+
+  theme(plot.title = element_text(hjust = 0.5,size=12))+
+  # ggtitle("Desempeño en Saber 11 del San Tarsicio vs. colegios masculinos de referencia")+
+  labs(y="Puntaje promedio en sociales")+
+  scale_colour_manual(name= "Colegio", values=values)+
+  theme(legend.position="right",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=10, face="plain"),
+        legend.title=element_text(size=10, face="bold"),
+        axis.title.y=element_text(size=12, face="bold" ),
+        axis.text.x=element_text(face="bold", size=12))+
+  theme(axis.title.x=element_text(size=12, face="bold"))+
+  theme(axis.text.y=element_text(size=12, face="bold"))+
+  theme(strip.text.x = element_text(size = 12, face = "bold"))+
+  theme(axis.title.y = element_blank())+
+  guides(colour = guide_legend(reverse=TRUE,nrow = 15,override.aes = list(shape = 15, size = 10)))
+  
+ggplotly(calbsoci)  
+
+```
+
+
+<aside class="notes" data-markdown>
+       ## Mejor que:
+          - Alcaparros
+          - Anglo Colombiano
+          - Femenino
+          
+      ## Igual que:
+         - Andino
+         - Tilatá
+         
+    </aside>
+
+## {data-background="saberpro.jpg"}
+
+
+## Saber Pro Lenguaje 
+```{r sbproleng,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+prolista <- zpro11a18[zpro11a18$Codigocolegio%in%lista,c("Codigocolegio","ZLcritpro","ZRcuantpro","ZIngpro")]
+mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
+
+pronom <- merge(prolista,mininom,by="Codigocolegio")
+pronom <- as.data.frame(pronom)
+names(pronom) <- c("Codigocolegio","Lenguaje","Razonamiento","Inglés","Colegio")
+
+
+ give.n <- function(x){
+      return(c(y = median(x)*1.05, label = length(x))) 
+      # experiment with the multiplier to find the perfect position
+    }
+    
+
+ # ordenar Nomlabel para que Pachas quede primero
+pronom$Colegio <- as.factor(pronom$Colegio)
+pronom$Colegio <- ordered(pronom$Colegio,
+                            levels = c("Instituto Alberto Merani","Unidad Pedagógica","Andino",
+                                       "Anglo Americano","Juan Ramón Jiménez","Anglo Colombiano","Gimnasio Moderno","Santa Francisca Romana",
+                                       "Los Nogales","Nuevo Colombo Americano","Gimnasio Campestre","Gimnasio Femenino","Tilatá","Los Alcaparros",
+                                       "Campoalegre","Clara Casas","San Patricio"))
+ 
+sbproleng <- ggplot(pronom, aes(x=Colegio, y=Lenguaje))+
+      geom_boxplot(colour = ifelse(levels(pronom$Colegio)=="Gimnasio Moderno","orangered","black"))+
+      theme_bw()+
+      labs(x="Colegio",y="Promedio estandarizado lenguaje")+
+      scale_fill_brewer(palette = "Paired")+
+      stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+                   position = position_dodge(width = 1)) +
+      geom_hline(yintercept = 0)+
+      theme(legend.position="none",
+            title=element_text(face = "bold"),
+            legend.text=element_text(size=12, face="plain"),
+            legend.title=element_text(size=12, face="bold"),
+            axis.title.y=element_text(size=12, face="bold" ),
+            axis.text.x=element_text(angle=90, vjust=0.7,face="bold", size=12))+
+      theme(axis.title.x=element_text(size=12, face="bold"))+
+      theme(axis.text.y=element_text(size=12, face="bold"))+
+      theme(strip.text.x = element_text(size = 12, face = "bold"))
+
+ggplotly(sbproleng)
+
+```
+
+<aside class="notes" data-markdown>
+       ## Diferencias significativas entre grupos
+       - AOV, F= 6.445, P < 0.05
+       
+       ## Diferencia entre GM y Merani
+       - P < 0.01, low: 0.37, high: 1.31
+       
+        ## Diferencia entre GM y Pachas
+       - P = 0.01, low: 0.03, high: 0.38
+       
+        ## Diferencia entre GM y Juan Ramón
+       - P = 0.02, low: 0.04, high: 0.89
+         
+    </aside>
+
+
+
+## Saber Pro Razonamiento Cuantitativo 
+```{r sbprocuant,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+prolista <- zpro11a18[zpro11a18$Codigocolegio%in%lista,c("Codigocolegio","ZLcritpro","ZRcuantpro","ZIngpro")]
+mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
+
+pronom <- merge(prolista,mininom,by="Codigocolegio")
+pronom <- as.data.frame(pronom)
+names(pronom) <- c("Codigocolegio","Lenguaje","Razonamiento","Inglés","Colegio")
+
+
+ give.n <- function(x){
+      return(c(y = median(x)*1.05, label = length(x))) 
+      # experiment with the multiplier to find the perfect position
+    }
+    
+ # ordenar Nomlabel para que Pachas quede primero
+pronom$Colegio <- as.factor(pronom$Colegio)
+pronom$Colegio <- ordered(pronom$Colegio,
+                            levels = c("Andino","Tilatá","Los Nogales","Nuevo Colombo Americano","Anglo Americano","Los Alcaparros",
+                                       "Instituto Alberto Merani",
+                                       "Anglo Colombiano","Santa Francisca Romana","Gimnasio Moderno",
+                                      "Gimnasio Campestre","Juan Ramón Jiménez","Gimnasio Femenino",
+                                       "San Patricio","Unidad Pedagógica","Campoalegre","Clara Casas"))
+
+sbprocuant <- ggplot(pronom, aes(x=Colegio, y=Razonamiento))+
+      geom_boxplot(colour = ifelse(levels(pronom$Colegio)=="Gimnasio Moderno","orangered","black"))+
+      theme_bw()+
+      labs(x="Colegio",y="Promedio estandarizado R. cuantitativo")+
+      scale_fill_brewer(palette = "Paired")+
+      stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+                   position = position_dodge(width = 1)) +
+      geom_hline(yintercept = 0)+
+      theme(legend.position="none",
+            title=element_text(face = "bold"),
+            legend.text=element_text(size=12, face="plain"),
+            legend.title=element_text(size=12, face="bold"),
+            axis.title.y=element_text(size=12, face="bold" ),
+            axis.text.x=element_text(angle=90, vjust=0.7,face="bold", size=12))+
+      theme(axis.title.x=element_text(size=12, face="bold"))+
+      theme(axis.text.y=element_text(size=12, face="bold"))+
+      theme(strip.text.x = element_text(size = 12, face = "bold"))
+
+ggplotly(sbprocuant)
+
+```
+
+
+<aside class="notes" data-markdown>
+       ## Diferencias significativas entre grupos
+       - AOV, F= 12.13, P < 0.01
+       
+       ## Diferencia entre GM y Merani
+       - P < 0.05, low: 0.35, high: 1.35
+       
+       ## Diferencia entre GM y Clara Casas
+       - P < 0.05, low: 0.18, high: 1.12
+       
+       ## Diferencia entre GM y Nogales
+       - P = 0.02, low: 0.02, high: 0.85
+       
+       ## Diferencia entre GM y San Patricio
+       - P = 0.03, low: -0-92, high: -0.009
+         
+    </aside>
+
+
+## Saber Pro Inglés 
+```{r sbproing,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+prolista <- zpro11a18[zpro11a18$Codigocolegio%in%lista,c("Codigocolegio","ZLcritpro","ZRcuantpro","ZIngpro")]
+mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
+
+pronom <- merge(prolista,mininom,by="Codigocolegio")
+pronom <- as.data.frame(pronom)
+names(pronom) <- c("Codigocolegio","Lenguaje","Razonamiento","Inglés","Colegio")
+
+
+ give.n <- function(x){
+      return(c(y = median(x)*1.05, label = length(x))) 
+      # experiment with the multiplier to find the perfect position
+    }
+    
+# ordenar Nomlabel para que Pachas quede primero
+pronom$Colegio <- as.factor(pronom$Colegio)
+pronom$Colegio <- ordered(pronom$Colegio,
+                            levels = c("Santa Francisca Romana","Tilatá","Anglo Colombiano","Andino","Gimnasio Femenino", "Gimnasio Moderno","Clara Casas","Los Nogales",
+                                       "Nuevo Colombo Americano","Anglo Americano","Los Alcaparros","Juan Ramón Jiménez", "Gimnasio Campestre","Campoalegre",
+                                       "Instituto Alberto Merani","Unidad Pedagógica", "San Patricio"))
+
+sbproing <- ggplot(pronom, aes(x=Colegio, y=Inglés))+
+      geom_boxplot(colour = ifelse(levels(pronom$Colegio)=="Gimnasio Moderno","orangered","black"))+
+      theme_bw()+
+      labs(x="Colegio",y="Z score promedio 2011-2018")+
+      scale_fill_brewer(palette = "Paired")+
+      stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+                   position = position_dodge(width = 1)) +
+      geom_hline(yintercept = 0)+
+      theme(legend.position="none",
+            title=element_text(face = "bold"),
+            legend.text=element_text(size=12, face="plain"),
+            legend.title=element_text(size=12, face="bold"),
+            axis.title.y=element_text(size=12, face="bold" ),
+            axis.text.x=element_text(angle=90, vjust=0.7,face="bold", size=12))+
+      theme(axis.title.x=element_text(size=12, face="bold"))+
+      theme(axis.text.y=element_text(size=12, face="bold"))+
+      theme(strip.text.x = element_text(size = 12, face = "bold"))
+
+ggplotly(sbproing)
+
+```
+
+<aside class="notes" data-markdown>
+       ## Diferencias significativas entre grupos
+       - AOV, F= 8.467, P < 0.001
+       
+       ## Diferencias significativas entre Nogales y Moderno
+       - P = 0.006 low= 0.07 high = 0.88
+       
+       ## Diferencias significativas entre Pachas y Moderno
+       - P = 0.04 low= 0.006 high = 0.76
+         
+    </aside>
+
+##Egresados de carreras, 2011-2018
+```{r carreras,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+area <-  c("Bellasartes","Cieneducacion","Socihumanidades",
+           "Agrovet","Ciensalud","Econadminis",
+           "Ingearquitectura","Mateciencias")
+
+labelsarea <-  c("Bellas artes","Ciencias de la educación","Sociales y humanidades",
+                 "Agronomía y veterinaria","Ciencias de la salud","Economía y administración",
+                 "Ingeniería y arquitectura","Matemáticas y ciencias")
+
+temp <- carreras[is.element(carreras$Codigocolegio, lista),c("Codigocolegio", "Nombre",area)]
+
+
+  #ENSAYAR PARA LA GRÁFICA
+  data_long <- gather(temp, Area, Total, Bellasartes:Mateciencias, factor_key=TRUE)
+  data_long$Label <- ifelse(data_long$Total>=2,paste0(sprintf("%.0f", data_long$Total), "%"),"")
+  mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
+  data_long <- merge(data_long,mininom, by = "Codigocolegio")
+
+  df <- data_long
+
+  df$Area <- factor(df$Area, levels = rev(levels(df$Area)))
+
+  names(df) <- c("Codigocolegio", "Nombre","Area","Total","Porcentaje","Colegio")
+
+  df$Area <- revalue(df$Area,
+                     c("Bellasartes"="Bellas artes",
+                       "Cieneducacion"="Ciencias de la educación",
+                       "Socihumanidades"="Sociales y humanidades",
+                       "Agrovet"="Agronomía y veterinaria",
+                       "Ciensalud"="Ciencias de la salud",
+                       "Econadminis"="Economía y administración",
+                       "Ingearquitectura"="Ingeniería y arquitectura",
+                       "Mateciencias"="Matemáticas y ciencias"))
+
+  df$Total <- round(df$Total,3)
+
+  df$Colegio <- as.factor(df$Colegio)
+  df$Colegio <- ordered(df$Colegio,
+                            levels = c( "Los Nogales","Nuevo Colombo Americano","Anglo Americano",
+                                       "Los Alcaparros", "Gimnasio Campestre","Andino","Anglo Colombiano","Gimnasio Femenino","Santa Francisca Romana",
+                                       "Instituto Alberto Merani","Campoalegre","Tilatá", "San Patricio","Unidad Pedagógica","Clara Casas",
+                                       "Juan Ramón Jiménez","Gimnasio Moderno"))
+  
+  # Plot
+
+plotcarr <- ggplot(df, aes(x = Colegio, y = Total, fill = Area, label=Porcentaje)) +
+    geom_bar(stat = "identity", width = .7) +
+    geom_text(size = 4, position = position_stack(vjust = 0.5))+
+    ylab("")+
+    xlab("")+
+    theme_bw()+
+    theme(legend.position="top")+
+    theme(plot.title = element_text(hjust = 0.5))+
+    ggtitle("")+
+    guides(fill=guide_legend(nrow=3))+
+    scale_fill_brewer(name="Carreras",
+                      breaks=area,labelsarea, palette="Paired")+
+    coord_flip()+
+    theme(plot.title = element_text(lineheight = 1, face = "bold",size=12, vjust = 2)) +
+    theme(axis.text.y = element_text(colour = ifelse(levels(df$Colegio)=="Gimnasio Moderno","orangered","black"),size="18"))+
+    theme(axis.text.x= element_text(colour="black",size="12"))+
+    theme(axis.title.x=element_text(size=12, lineheight=.9, vjust=0, face = "bold"))+
+    theme(axis.title.y=element_text(size=12, lineheight=.9, vjust=1, face = "bold"))+
+    theme(legend.text=element_text(size=12),
+          legend.title=element_text(size=12))+
+    geom_hline(yintercept=50, color="gray", linetype = "dashed")+
+    annotate("text", x = 0.5, y = 1, label = "15", color = "#FF7F00", size = 4) + #arte
+    annotate("text", x = 0.5, y = 16, label = "3", color = "#FDBF6F", size = 4) + #educación
+    annotate("text", x = 0.5, y = 28, label = "25", color = "#E31A1C", size = 4) + #socihum
+    annotate("text", x = 0.5, y = 35, label = "2", color = "#FB9A99", size = 4) + #agrovet
+    annotate("text", x = 0.5, y = 51, label = "7", color = "#33A02C", size = 4) + #salud
+    annotate("text", x = 0.5, y = 77, label = "26", color = "#B2DF8A", size = 4) + #ecoadmin
+    annotate("text", x = 0.5, y = 83, label = "24", color = "#1F78B4", size = 4) + #ingarq
+    annotate("text", x = 0.5, y = 100, label = "4", color = "#A7CEE3", size = 4)
+
+ggplotly(plotcarr)%>%
+  layout(legend = list(
+      orientation = "h",
+                   y = 0, x = 1
+    )
+  )
+
+```
+
+
+<aside class="notes" data-markdown>
+       ## Por encima del promedio:
+          - Economía y administración
+          
+      ## Dentro del promedio:
+         - Artes
+         - Ingeniería y arquitectura
+         
+      ## Por debajo del promedio: 
+         - Sociales y humanidades
+         - Ciencias de la Salud
+         - Ciencias de la educación
+         - Agronomía y veterinaria
+         - Matemáticas y ciencias
+         
+    </aside>
+
+
+##Egresados de universidades, 2011-2018
+```{r universidades,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+univ <- c("Andes","Javeriana","Sabana","Rosario","Nacional","Tadeo","Politécnico","Externado","El Bosque","EAFIT","S. Arboleda","Santo Tomás","Militar","La Salle","Bolivariana",
+          "EAN" ,"CESA","Uniminuto","Piloto","Libertadores","América","Esc. Ingeniería","Católica","Libre","Central","Otras")
+
+labelsuniv <- c("Andes","Javeriana","Sabana","Rosario","Nacional","Tadeo","Politécnico","Externado","El Bosque","EAFIT","S. Arboleda","Santo Tomás","Militar","La Salle","Bolivariana",
+                "EAN" ,"CESA","Uniminuto","Piloto","Libertadores","América","Esc. Ingeniería","Católica","Libre","Central","Otras")
+
+graphuniversidades <- universidades[is.element(universidades$Codigocolegio,graflista),c(univ,"Codigocolegio","Nomlabel","Totgraduados")]
+  
+  # Aca sigue normal
+  df <- melt(graphuniversidades, id.vars = c("Codigocolegio","Nomlabel","Totgraduados"))
+  
+  colnames(df) [4] <-"Universidad"
+  colnames(df) [5] <- "Porcentaje"
+  
+  test <- df[order(df$Universidad), ]
+  
+  test$Label <- ifelse(test$Porcentaje>=2,paste0(sprintf("%.0f", test$Porcentaje), "%"),"")
+  
+  test$Nomlabel <-as.factor(test$Nomlabel)
+  test$Label <-as.factor(test$Label)
+  test$Codigocolegio <-as.factor(test$Codigocolegio)
+  
+  
+  
+  df <- test 
+  
+  colourCount = length(unique(df$Universidad))
+
+  getPalette = colorRampPalette(brewer.pal(12, "Paired"))
+  
+  # Ordenar de la mayor a la menor
+  df$Universidad <- factor(df$Universidad, levels = rev(levels(df$Universidad)))
+  
+  #quitar un totgraduados para que no salga repetido en la gráfica
+  df$Labelestu <- df$Totgraduados
+  df$Labelestu[duplicated(df$Labelestu)] <- NA
+  
+  
+  names(df) <- c("Codigocolegio", "Colegio","Totgraduados",  "Universidad",   "Fracción",    "Porcentaje",         "Labelestu")
+  
+  df$Colegio <- as.factor(df$Colegio)
+  df$Colegio <- ordered(df$Colegio,
+                            levels = c("Clara Casas", "Juan Ramón Jiménez","Anglo Americano",
+                                        "San Patricio","Nuevo Colombo Americano","Unidad Pedagógica",
+                                        "Gimnasio Femenino","Instituto Alberto Merani","Gimnasio Campestre",
+                                       "Tilatá","Santa Francisca Romana","Andino","Anglo Colombiano",
+                                       "Campoalegre","Los Alcaparros","Los Nogales","Gimnasio Moderno"))
+  
+  # Plot
+uniplot <- ggplot(df,aes(x = Colegio, y = Fracción, fill = Universidad, label= Porcentaje)) +
+    geom_bar(stat = "identity", width = .7) +
+    geom_text(size = 2, position = position_stack(vjust = 0.5))+
+    # geom_text(position = "stack", aes(label=Labelestu, hjust = 0.5, vjust=1), size=4)+
+    theme_bw()+
+    ggtitle("")+
+    theme(plot.title = element_text(hjust = 0.5))+
+    ylab("")+
+    xlab("")+
+    theme(legend.position="top")+
+    guides(fill=guide_legend(nrow=6))+
+    scale_fill_manual(name="Universidades",breaks=univ,labelsuniv,values = getPalette(colourCount))+
+    coord_flip()+
+    theme(plot.title = element_text(lineheight = 1, face = "bold",size=12, vjust = 2)) +
+    theme(axis.text.x= element_text(colour="black",size="12"))+
+    theme(axis.text.y = element_text(colour = ifelse(levels(df$Colegio)=="Gimnasio Moderno","orangered","black"),size="18"))+
+    theme(axis.title.x=element_text(size=12, lineheight=.9, vjust=0, face = "bold"))+
+    theme(axis.title.y=element_text(size=12, lineheight=.9, vjust=1, face = "bold"))+
+    theme(legend.text=element_text(size=12),
+          legend.title=element_text(size=12))
+
+ggplotly(uniplot)
+
+```
+
+
+<aside class="notes" data-markdown>
+       ## Por encima del promedio:
+          - CESA
+          - Tadeo
+          - Politécnico
+          - EAN
+          
+      ## Dentro del promedio:
+         - Sabana
+         - Rosario
+         - La Salle
+         - Sergio Arboleda
+         - Piloto
+         
+      ## Por debajo del promedio: 
+         - Andes
+         - Javeriana
+         - Nacional
+         - Externado
+         - Uniminuto
+         
+    </aside>
+
+##Egresados de carreras, por universidad, 2011-2018
+```{r carruniv,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+area <-  names(carrunivwide)[8:325]
+labelsarea <-   names(carrunivwide)[8:325]
+
+ temp <- carrunivwide[is.element(carrunivwide$Codigocolegio, colegiointeres),c("Codigocolegio", "Univlabel","Nombre","Nomlabel","Codigodane" ,area)]
+  
+  carruniv <- melt(temp,id.vars = ,c("Codigocolegio", "Univlabel","Nombre","Nomlabel","Codigodane"))
+  carruniv <- carruniv[complete.cases(carruniv),]
+  
+  names(carruniv) <- c("Codigocolegio", "Univlabel",     "Nombre",        "Nomlabel",      "Codigodane",    "Carrlabel","n")
+  
+  df <- carruniv
+  
+  colourCount = length(unique(df$Univlabel))
+  
+  
+  names(df) <- c("Codigocolegio", "Universidad",     "Nombre",        "Colegio",      "Codigodane",    "Carrera",     "n")
+  
+  df$Carrera <- ordered(df$Carrera,c( "Ingeniería química", "Comunicación audiovisual","Técnico en publicidad y mercadeo",
+                                      "Ingeniería biomédica", "Filosofía","Matemáticas","Ecología","Diseño de modas",
+                                      "Diseño de interiores","Ingeniería de sistemas","Publicidad y mercadeo","Diseño",
+                                      "Antropología","Administración agroprecuaria","Ingeniería civil","Ciencia política",
+                                      "Música","Ingeniería mecánica","Arte", "Historia","Relaciones internacionales",
+                                      "Psicología","Medicina",  "Publicidad", "Diseño industrial","Economía", "Comunicación social",                                       "Arquitectura","Ingeniería industrial","Derecho" ,"Administración"))
+  
+plotcu <- ggplot(df, aes(x = Carrera, y = n, fill = Universidad)) +
+    geom_bar(stat = "identity", width = .7) +
+    theme_bw()+
+    coord_flip()+
+    facet_grid(~Colegio, scales = "free_x")+
+    scale_y_continuous(breaks=seq(0,50,2))+
+    labs(y="Número de egresados 2011-2018",x="",fill="Universidad")+
+    scale_fill_manual(values = colorRampPalette(brewer.pal(12, "Paired"))(colourCount)) +
+    theme(plot.title = element_text(lineheight=1, face="bold"),
+          legend.position="right", legend.title=element_text(face='bold'),
+          axis.title.x =element_text(vjust=0.5, size=8, face = "bold"),
+          axis.text.x  = element_text(vjust=0.5, size=8, face = "bold"),
+          axis.ticks.x = element_blank())+
+    theme(title=element_text(face = "bold"),
+          legend.text=element_text(size=8),
+          legend.title=element_text(size=8),
+          axis.title.y=element_text(size=8, face="bold" ),
+          axis.text.x=element_text(vjust=0.7,face="bold", size=8))+
+    theme(axis.title.y = element_text(margin = margin(t = 0, r = 8, b = 0, l = 0)))+
+    theme(axis.text.y=element_text(size=8, face="bold"))
+
+ggplotly(plotcu)
+
+```
+
+
+<aside class="notes" data-markdown>
+       ## Andes:
+          - I. industrial
+          - I. mecánica
+          - I. civil
+          - Economía
+          - Historia
+          - Música
+          - Ciencia política
+          
+       ## Javeriana:
+         - Arquitectura
+         
+       ## Nacional: 
+         - Filosofía
+         
+       ## Rosario:
+         - Antropología
+         
+       ## Politécnico:
+         - Publicidad y mercado
+         - Técnico en publicidad y mercadeo
+         
+       ## Sabana:
+         - Comunicación audiovisual
+         - ingeniería química
+         
+       ## Tadeo:
+         - Diseño industrial
+         - publicidad
+         
+       ## Las demás:
+        - Carreras puntuales
+         
+    </aside>
+    
+## {data-background="saber11vsinternas.jpg"}
+## Correlación notas internas inglés - Inglés Saber 11
+```{r ingles,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+soloing <- crucegm2019[crucegm2019$Francoing=="Inglés",c("SB11Ingles","Inglés","Curso","Grupoinglés","Estudiante")]
+
+
+
+
+soloingplot <- ggplot(soloing, aes(x=Inglés, y=SB11Ingles,color=Curso,label=Estudiante))+
+  facet_wrap(~Curso)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales inglés estandarizadas",y="Notas inglés SB 11 estandarizadas")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  # geom_hline(yintercept = 0)+
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+ggplotly(soloingplot)
+
+```
+
+## Correlación notas internas español - Lectura Crítica Saber 11
+```{r español,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+espplotly <- ggplot(crucegm2019, aes(x=Español, y=SB11Lcrit,color=Curso,label=Estudiante))+
+  facet_wrap(~Curso)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales español",y="Notas lectura crítica SB 11")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+ggplotly(espplotly)
+
+```
+      
+## Correlación notas internas Lectura Crítica 1 - Lectura Crítica Saber 11
+```{r lc1,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+nodifs <- c("11A1","11A2","11B1","11B3","11C1")
+grupolcgrande <- crucegm2019[crucegm2019$GrupoLC1%in%nodifs,c("Curso","LCI","GrupoLC1","SB11Lcrit","Estudiante")]
+
+lc11c1 <- crucegm2019[crucegm2019$GrupoLC1=="11C1",c("Curso","LCI","GrupoLC1","SB11Lcrit","Estudiante")]
+lc11c2 <- crucegm2019[crucegm2019$GrupoLC1=="11C2",c("Curso","LCI","GrupoLC1","SB11Lcrit","Estudiante")]
+
+# rbind para las que hice correlaciones
+grupolcgrande$Grupo <- "Mayoría"
+lc11c1$Grupo <- "11C - Grupo 1"
+lc11c2$Grupo <- "11C - Grupo 2"
+
+
+ab <- rbind(grupolcgrande,lc11c1)
+correlc1 <- rbind(ab,lc11c2)
+
+# PLOT
+lc1plot <- ggplot(correlc1, aes(x=LCI, y=SB11Lcrit,color=Grupo,label=Estudiante))+
+  facet_wrap(~Grupo,nrow = 1)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales Lectura crítica I",y="Notas Lectura Crítica SB 11")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+ggplotly(lc1plot)
+
+```
+            
+## Correlación notas internas Lectura Crítica 2 - Lectura Crítica Saber 11
+```{r lc2,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+LC2C1 <- crucegm2019[crucegm2019$GrupoLCII=="11C1",c("Curso","LCII","SB11Lcrit","Estudiante")]
+LC2mayoria <- crucegm2019[crucegm2019$GrupoLCII!="11C1",c("Curso","LCII","SB11Lcrit","Estudiante")]
+
+LC2C1$Curso <- "11C - 1"
+LC2mayoria <- rbind(LC2mayoria,LC2C1)
+
+# PLOT
+lc2plot <-ggplot(LC2mayoria, aes(x=LCII, y=SB11Lcrit,color=Curso,label=Estudiante))+
+  facet_wrap(~Curso,nrow = 1)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales lectura crítica 2",y="Notas Lectura crítica SB 11")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+
+ggplotly(lc2plot)
+
+```
+   
+## Correlación notas internas Filosofía - Lectura Crítica Saber 11
+```{r filosofia,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+filoplot <- ggplot(crucegm2019, aes(x=Filosofía, y=SB11Lcrit,color=Curso,label=Estudiante))+
+  facet_wrap(~Curso)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales filosofía",y="Notas lectura crítica SB 11")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+ggplotly(filoplot)
+
+```
+      
+      
+## Correlación notas internas Sociales - Sociales Saber 11
+```{r sociales,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+sociplot <- ggplot(crucegm2019, aes(x=Sociales, y=SB11Soci,color=Curso,label=Estudiante))+
+  facet_wrap(~Curso)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales sociales",y="Notas sociales SB 11")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+ggplotly(sociplot)
+
+```
+            
+## Correlación notas internas Física - Ciencias Naturales Saber 11
+```{r física,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+fisi11b1 <- crucegm2019[crucegm2019$Grupofisica=="11B1",c("Curso","Física","SB11Cnat","Estudiante")]
+fisi11b1$Curso <- "11B - 1"
+fisi <- crucegm2019[crucegm2019$Grupofisica!="11B1",c("Curso","Física","SB11Cnat","Estudiante")]
+fisi <- rbind(fisi,fisi11b1)
+
+
+fisiplot <- ggplot(fisi, aes(x=Física, y=SB11Cnat,color=Curso,label=Estudiante))+
+  facet_wrap(~Curso,nrow = 1)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales física",y="Notas Ciencias Naturales SB 11")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+ggplotly(fisiplot)
+
+```
+
+
+## Correlación notas internas Química - Ciencias Naturales Saber 11
+```{r química,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+quimiplot <- ggplot(crucegm2019, aes(x=Química, y=SB11Cnat,color=Curso,label=Estudiante))+
+  facet_wrap(~Curso)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales química",y="Notas ciencias naturales SB 11")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+ggplotly(quimiplot)
+
+```
+
+## Correlación notas internas Biología - Ciencias Naturales Saber 11
+```{r biología,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+bioplot <- ggplot(crucegm2019, aes(x=Biología, y=SB11Cnat,color=Curso,label=Estudiante))+
+  facet_wrap(~Curso)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales biología",y="Notas Ciencias Naturales SB 11")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+ggplotly(bioplot)
+
+```
+
+## Correlación notas internas Cálculo - Matemáticas Saber 11
+```{r matemáticas,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+mateplot <- ggplot(crucegm2019, aes(x=Cálculo, y=SB11Mate,color=Curso,label=Estudiante))+
+  facet_wrap(~Curso)+
+  geom_point()+
+  theme_bw()+
+  geom_smooth(method=lm)+
+  labs(x="Notas finales cálculo",y="Notas Matemáticas SB 11")+
+  scale_color_brewer(palette = "Paired")+
+  # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
+  #                                     position = position_dodge(width = 1)) +
+  theme(legend.position="none",
+        title=element_text(face = "bold"),
+        legend.text=element_text(size=16, face="plain"),
+        legend.title=element_text(size=16, face="bold"),
+        axis.title.y=element_text(size=16, face="bold" ),
+        axis.text.x=element_text(vjust=0.7,face="bold", size=16))+
+  theme(axis.title.x=element_text(size=16, face="bold"))+
+  theme(axis.text.y=element_text(size=16, face="bold"))+
+  theme(strip.text.x = element_text(size = 20, face = "bold"))
+
+ggplotly(mateplot)
+
+```
+                                                                                                                                              
+## FORTALEZAS
+
+- Disminución de brecha con Top 10 en 10 años (Saber 11).
+
+- Aumento del promedio en Saber 11 2018-2019 en todas las materias.
+
+- Alta probabilidad de ingreso a los Andes a cualquier carrera.
+
+- Más estudiantes en percentiles > 90 que referencia.
+
+- Inglés: mejor desempeño.
+
+- Saber Pro: por encima del promedio nacional. 
+
+- Correlaciones por encima de lo esperado en mayoría de materias
+
+
+## OPORTUNIDADES DE MEJORA
+
+- Saber 3,5,9 por debajo de colegios de referencia. 
+
+- L. crítica más diferencia con top 10. 
+
+- Saber Pro: razomamiento cuantitativo por debajo del promdio.
+
+- Notas internas: diferencias entre cursos.
+
+- Correlaciones por debajo de lo esperado: lc2, biología
