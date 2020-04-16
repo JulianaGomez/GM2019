@@ -115,19 +115,6 @@ Sys.setenv("plotly_username"="Julitwiga")
 Sys.setenv("plotly_api_key"="oBDpb5isfYwJYpdZIxdw")
 ```
 
-<!-- ## Organización de la presentación -->
-
-<!-- La presentación para podrán ver en dos versiones, de acuerdo al tiempo y a las necesidades que tengan.  -->
-
-<!-- - Versión larga (Incluye metodología, y todas las gráficas): Ver [Larga](#foo). -->
-
-<!-- - Versión corta (hallazgos más interesantes): Ver [Corta](#corta). -->
-
-
-<!-- ## Resumen {#corta data-transition-speed="fast"} -->
-
-
-
 
 ## Metodología {data-transition-speed="fast"}
 
@@ -2384,195 +2371,195 @@ ggplotly(mateplot)
 
 - Menor correlación: lc2 - lectura crítica Saber 11.
 
-## Acceso directo Andes 2020-2
+<!-- ## Acceso directo Andes 2020-2 -->
 
-- Promedio del puntaje global 2017-2019 - 1.25 desviaciones estándar >= 310
+<!-- - Promedio del puntaje global 2017-2019 - 1.25 desviaciones estándar >= 310 -->
 
-- 61 colegios en 10 ciudades
+<!-- - 61 colegios en 10 ciudades -->
 
-- 310: puntaje mínimo 2020-1
+<!-- - 310: puntaje mínimo 2020-1 -->
 
-## ¿Por qué las del Marymount recibieron cartas de los Andes? {data-transition-speed="fast"}
-```{r gmmm,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
-moderno18 <- subset(pglobal, Codigocolegio==22848)
-moderno18 <- subset(moderno18, Anio==2018)
-mm19 <- subset(pglobal, Codigocolegio==19513)
-mm19 <- subset(mm19, Anio==2019)
+<!-- ## ¿Por qué las del Marymount recibieron cartas de los Andes? {data-transition-speed="fast"} -->
+<!-- ```{r gmmm,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10} -->
+<!-- moderno18 <- subset(pglobal, Codigocolegio==22848) -->
+<!-- moderno18 <- subset(moderno18, Anio==2018) -->
+<!-- mm19 <- subset(pglobal, Codigocolegio==19513) -->
+<!-- mm19 <- subset(mm19, Anio==2019) -->
 
 
-compuestoscoles <- rbind(moderno18,mm19)
-    puestos <- compuestoscoles[,c("Codigocolegio","Global","Anio","Type")]
-    mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
+<!-- compuestoscoles <- rbind(moderno18,mm19) -->
+<!--     puestos <- compuestoscoles[,c("Codigocolegio","Global","Anio","Type")] -->
+<!--     mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")] -->
 
-    puestos <- merge(puestos,mininom, by="Codigocolegio")
-    puestos$Global <- as.numeric(puestos$Global)
+<!--     puestos <- merge(puestos,mininom, by="Codigocolegio") -->
+<!--     puestos$Global <- as.numeric(puestos$Global) -->
 
 
-    df <- puestos
-    df$Type <- ordered(df$Type, levels = c("cadetblue1", "seagreen3", "orange"))
-    df$Type <- revalue(df$Type,c("cadetblue1"="MADE", "seagreen3"="Otras", "orange"="Ninguna"))
-    # wrap nombres
-    # df$Nombreest <- str_wrap(df$Nombreest, width = 10)
+<!--     df <- puestos -->
+<!--     df$Type <- ordered(df$Type, levels = c("cadetblue1", "seagreen3", "orange")) -->
+<!--     df$Type <- revalue(df$Type,c("cadetblue1"="MADE", "seagreen3"="Otras", "orange"="Ninguna")) -->
+<!--     # wrap nombres -->
+<!--     # df$Nombreest <- str_wrap(df$Nombreest, width = 10) -->
 
-    # anios <- c(2019)
-    names(df) <- c("Codigocolegio", "Global","Anio","Carrera","Colegio")
+<!--     # anios <- c(2019) -->
+<!--     names(df) <- c("Codigocolegio", "Global","Anio","Carrera","Colegio") -->
 
 
-    df$Colegio <- as.factor(df$Colegio)
-    
-    # # ordenar Nomlabel para que Pachas quede primero
-    # df$Colegio <- as.factor(df$Colegio)
-    # df$Colegio <- ordered(df$Colegio,
-    #                         levels = c("Gimnasio Moderno","Instituto Alberto Merani","Nuevo Colombo Americano","Anglo Americano",
-    #                                        "Juan Ramón Jiménez","San Patricio","Clara Casas","Unidad Pedagógica",
-    #                                      "Gimnasio Femenino","Los Nogales","Santa Francisca Romana","Campoalegre",
-    #                                      "Tilatá","Los Alcaparros","Gimnasio Campestre","Anglo Colombiano", "Andino"))
-    
-    
-    plot_ly(data = df, x = ~Colegio, y = ~Global,color = ~Carrera,type="scatter", marker = list(size = 10,alpha=0.5))%>% layout(hovermode = 'closest')
+<!--     df$Colegio <- as.factor(df$Colegio) -->
 
-```
+<!--     # # ordenar Nomlabel para que Pachas quede primero -->
+<!--     # df$Colegio <- as.factor(df$Colegio) -->
+<!--     # df$Colegio <- ordered(df$Colegio, -->
+<!--     #                         levels = c("Gimnasio Moderno","Instituto Alberto Merani","Nuevo Colombo Americano","Anglo Americano", -->
+<!--     #                                        "Juan Ramón Jiménez","San Patricio","Clara Casas","Unidad Pedagógica", -->
+<!--     #                                      "Gimnasio Femenino","Los Nogales","Santa Francisca Romana","Campoalegre", -->
+<!--     #                                      "Tilatá","Los Alcaparros","Gimnasio Campestre","Anglo Colombiano", "Andino")) -->
 
 
-## Acceso directo: Promedio Puntaje Global 2012-2019 {data-transition-speed="fast"}
-```{r andes2020pg,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
-finalandes20202 <- finalandes20202[complete.cases(finalandes20202),]
+<!--     plot_ly(data = df, x = ~Colegio, y = ~Global,color = ~Carrera,type="scatter", marker = list(size = 10,alpha=0.5))%>% layout(hovermode = 'closest') -->
 
-adentro <- ggplot(finalandes20202, aes(x=punt_global, fill=Corte)) +
-           geom_histogram()+
-           geom_vline(xintercept=343)+
-           geom_text(aes(x=310, label="Moderno en \n cola izquierda", y=500), colour="black",text=element_text(size=11)) +
-           labs(x="Puntaje Global promedio de los últimos tres años", y = "Número de colegios")
+<!-- ``` -->
 
 
-ggplotly(adentro)
+<!-- ## Acceso directo: Promedio Puntaje Global 2012-2019 {data-transition-speed="fast"} -->
+<!-- ```{r andes2020pg,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10} -->
+<!-- finalandes20202 <- finalandes20202[complete.cases(finalandes20202),] -->
 
+<!-- adentro <- ggplot(finalandes20202, aes(x=punt_global, fill=Corte)) + -->
+<!--            geom_histogram()+ -->
+<!--            geom_vline(xintercept=343)+ -->
+<!--            geom_text(aes(x=310, label="Moderno en \n cola izquierda", y=500), colour="black",text=element_text(size=11)) + -->
+<!--            labs(x="Puntaje Global promedio de los últimos tres años", y = "Número de colegios") -->
 
-```
 
+<!-- ggplotly(adentro) -->
 
 
-## Acceso directo: Desviación estándadar {data-transition-speed="fast"}
-```{r andes2020sd,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
-finalandes20202 <- finalandes20202[complete.cases(finalandes20202),]
+<!-- ``` -->
 
-adentro <- ggplot(finalandes20202, aes(x=SD, fill=Corte)) +
-           geom_histogram()+
-           geom_vline(xintercept=30.6)+
-           geom_text(aes(x=40, label="Moderno en \n cola derecha", y=500), colour="black",text=element_text(size=11)) +
-           labs(x="Desviación estándar promedio de los últimos tres años", y = "Número de colegios")
 
 
-ggplotly(adentro)
+<!-- ## Acceso directo: Desviación estándadar {data-transition-speed="fast"} -->
+<!-- ```{r andes2020sd,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10} -->
+<!-- finalandes20202 <- finalandes20202[complete.cases(finalandes20202),] -->
 
+<!-- adentro <- ggplot(finalandes20202, aes(x=SD, fill=Corte)) + -->
+<!--            geom_histogram()+ -->
+<!--            geom_vline(xintercept=30.6)+ -->
+<!--            geom_text(aes(x=40, label="Moderno en \n cola derecha", y=500), colour="black",text=element_text(size=11)) + -->
+<!--            labs(x="Desviación estándar promedio de los últimos tres años", y = "Número de colegios") -->
 
-```
 
+<!-- ggplotly(adentro) -->
 
-## Gimnasio Moderno no clasifica
 
-- Quedó en la cola izquierda del promedio
+<!-- ``` -->
 
-- Quedó en la cola derecha de la desviación estándar
 
+<!-- ## Gimnasio Moderno no clasifica -->
 
+<!-- - Quedó en la cola izquierda del promedio -->
 
-## Acceso directo: fórmula completa {data-transition-speed="fast"}
-```{r andes2020calculo,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
-finalandes20202 <- finalandes20202[complete.cases(finalandes20202),]
+<!-- - Quedó en la cola derecha de la desviación estándar -->
 
-adentro <- ggplot(finalandes20202, aes(x=Calculo, fill=Corte)) +
-           geom_histogram()+
-           geom_vline(xintercept=305)+
-           geom_text(aes(x=270, label="Moderno en \n cola izquierda", y=500), colour="black",text=element_text(size=11)) +
-           labs(x="Promedio puntaje global últimos tres años - 1.25 sd >= 310", y = "Número de colegios")
 
 
-ggplotly(adentro)
+<!-- ## Acceso directo: fórmula completa {data-transition-speed="fast"} -->
+<!-- ```{r andes2020calculo,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10} -->
+<!-- finalandes20202 <- finalandes20202[complete.cases(finalandes20202),] -->
 
+<!-- adentro <- ggplot(finalandes20202, aes(x=Calculo, fill=Corte)) + -->
+<!--            geom_histogram()+ -->
+<!--            geom_vline(xintercept=305)+ -->
+<!--            geom_text(aes(x=270, label="Moderno en \n cola izquierda", y=500), colour="black",text=element_text(size=11)) + -->
+<!--            labs(x="Promedio puntaje global últimos tres años - 1.25 sd >= 310", y = "Número de colegios") -->
 
-```
 
+<!-- ggplotly(adentro) -->
 
 
-## Ranking no es buen predictor de acceso directo {data-transition-speed="fast"}
-```{r andes2020,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
-directoandes <- finalandes20202[finalandes20202$Corte=="si",]
+<!-- ``` -->
 
-ranka19 <- subset(rankingscompletosA,Anio==2019)
-rankb19 <- subset(rankingscompletosB,Anio==2019)
-rankb19$Codigodane <- NULL
 
-rank19 <- rbind(ranka19,rankb19)
 
-rankdirectos <- rank19[rank19$Codigocolegio%in%directoandes$Codigocolegio,c("Codigocolegio","Ranking")]
+<!-- ## Ranking no es buen predictor de acceso directo {data-transition-speed="fast"} -->
+<!-- ```{r andes2020,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10} -->
+<!-- directoandes <- finalandes20202[finalandes20202$Corte=="si",] -->
 
+<!-- ranka19 <- subset(rankingscompletosA,Anio==2019) -->
+<!-- rankb19 <- subset(rankingscompletosB,Anio==2019) -->
+<!-- rankb19$Codigodane <- NULL -->
 
-directoandes <- merge(directoandes,rankdirectos,by="Codigocolegio")
-directoandes$Label <- paste(directoandes$Nombreest,"-",directoandes$Colemcpio)
+<!-- rank19 <- rbind(ranka19,rankb19) -->
 
-point <- ggplot(directoandes,aes(x=Ranking,y=Calculo, fill=Calendario,label=Label))+
-  facet_wrap(~Calendario)+
-  labs(x="Ranking 2019 por calendario", y="Promedio PG 2017-2019 - 1.25 sd")+
-  geom_smooth()+
-  geom_point() 
+<!-- rankdirectos <- rank19[rank19$Codigocolegio%in%directoandes$Codigocolegio,c("Codigocolegio","Ranking")] -->
 
-ggplotly(point)
 
+<!-- directoandes <- merge(directoandes,rankdirectos,by="Codigocolegio") -->
+<!-- directoandes$Label <- paste(directoandes$Nombreest,"-",directoandes$Colemcpio) -->
 
+<!-- point <- ggplot(directoandes,aes(x=Ranking,y=Calculo, fill=Calendario,label=Label))+ -->
+<!--   facet_wrap(~Calendario)+ -->
+<!--   labs(x="Ranking 2019 por calendario", y="Promedio PG 2017-2019 - 1.25 sd")+ -->
+<!--   geom_smooth()+ -->
+<!--   geom_point()  -->
 
-```
+<!-- ggplotly(point) -->
 
 
 
+<!-- ``` -->
 
 
-## Estrategia: no tener estudiantes con Puntajes Globales por debajo de 300 {data-transition-speed="fast"}
-```{r andes2020ref,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
-andesref <- finalandes20202[finalandes20202$Codigocolegio%in%lista,]
-andesref <- andesref[,c("Codigocolegio","Corte")]
 
-compuestoscoles <- subset(pglobal, Codigocolegio%in%lista)
-    puestos <- compuestoscoles[,c("Codigocolegio","Global","Anio","Type")]
-    mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
 
-    puestos <- merge(puestos,mininom, by="Codigocolegio")
-    puestos$Global <- as.numeric(puestos$Global)
 
+<!-- ## Estrategia: no tener estudiantes con Puntajes Globales por debajo de 300 {data-transition-speed="fast"} -->
+<!-- ```{r andes2020ref,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10} -->
+<!-- andesref <- finalandes20202[finalandes20202$Codigocolegio%in%lista,] -->
+<!-- andesref <- andesref[,c("Codigocolegio","Corte")] -->
 
-    df <- puestos
-    
-    anios <- c(2018)
-    df <- df[df$Anio%in%anios,]
-    names(df) <- c("Codigocolegio", "Global","Anio","Carrera","Colegio")
+<!-- compuestoscoles <- subset(pglobal, Codigocolegio%in%lista) -->
+<!--     puestos <- compuestoscoles[,c("Codigocolegio","Global","Anio","Type")] -->
+<!--     mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")] -->
 
+<!--     puestos <- merge(puestos,mininom, by="Codigocolegio") -->
+<!--     puestos$Global <- as.numeric(puestos$Global) -->
 
-    df$Colegio <- as.factor(df$Colegio)
-    
-    # ordenar Nomlabel para que Pachas quede primero
-    df$Colegio <- as.factor(df$Colegio)
-    df$Colegio <- ordered(df$Colegio,
-                            levels = c("Gimnasio Moderno","Juan Ramón Jiménez","Clara Casas","Unidad Pedagógica","Anglo Colombiano", "Andino",
-                                       "Instituto Alberto Merani","Nuevo Colombo Americano","Anglo Americano","San Patricio",
-                                         "Gimnasio Femenino","Los Nogales","Santa Francisca Romana","Campoalegre",
-                                         "Tilatá","Los Alcaparros","Gimnasio Campestre"))
-    
-    df <- merge(df,andesref,by="Codigocolegio")
-    
-    
-    plot_ly(data = df, x = ~Colegio, y = ~Global,color = ~Corte,type="scatter", marker = list(size = 10,alpha=0.5))%>%
-      layout(hovermode = 'closest')
 
+<!--     df <- puestos -->
 
-```
+<!--     anios <- c(2018) -->
+<!--     df <- df[df$Anio%in%anios,] -->
+<!--     names(df) <- c("Codigocolegio", "Global","Anio","Carrera","Colegio") -->
 
 
-## Conclusión {data-transition-speed="fast"}
+<!--     df$Colegio <- as.factor(df$Colegio) -->
 
-- Si se repitiera el proceso de acceso directo en el segundo semestre, GM no clasificaría al corte
+<!--     # ordenar Nomlabel para que Pachas quede primero -->
+<!--     df$Colegio <- as.factor(df$Colegio) -->
+<!--     df$Colegio <- ordered(df$Colegio, -->
+<!--                             levels = c("Gimnasio Moderno","Juan Ramón Jiménez","Clara Casas","Unidad Pedagógica","Anglo Colombiano", "Andino", -->
+<!--                                        "Instituto Alberto Merani","Nuevo Colombo Americano","Anglo Americano","San Patricio", -->
+<!--                                          "Gimnasio Femenino","Los Nogales","Santa Francisca Romana","Campoalegre", -->
+<!--                                          "Tilatá","Los Alcaparros","Gimnasio Campestre")) -->
 
-- No tener estudiantes con p. g. < 300 reduce desviación y sube promedio
+<!--     df <- merge(df,andesref,by="Codigocolegio") -->
 
-- Recoger información sobre esos estudiantes para hayar causas y tomar decisiones
 
-- Para acceso directo, apuntarle a CIE
+<!--     plot_ly(data = df, x = ~Colegio, y = ~Global,color = ~Corte,type="scatter", marker = list(size = 10,alpha=0.5))%>% -->
+<!--       layout(hovermode = 'closest') -->
+
+
+<!-- ``` -->
+
+
+<!-- ## Conclusión {data-transition-speed="fast"} -->
+
+<!-- - Si se repitiera el proceso de acceso directo en el segundo semestre, GM no clasificaría al corte -->
+
+<!-- - No tener estudiantes con p. g. < 300 reduce desviación y sube promedio -->
+
+<!-- - Recoger información sobre esos estudiantes para hayar causas y tomar decisiones -->
+
+<!-- - Para acceso directo, apuntarle a CIE -->
