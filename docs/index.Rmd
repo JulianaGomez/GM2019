@@ -115,21 +115,21 @@ Sys.setenv("plotly_username"="Julitwiga")
 Sys.setenv("plotly_api_key"="oBDpb5isfYwJYpdZIxdw")
 ```
 
-## Organización de la presentación
+<!-- ## Organización de la presentación -->
 
-La presentación para podrán ver en dos versiones, de acuerdo al tiempo y a las necesidades que tengan. 
+<!-- La presentación para podrán ver en dos versiones, de acuerdo al tiempo y a las necesidades que tengan.  -->
 
-- Versión larga (Incluye metodología, y todas las gráficas): Ver [Larga](#foo).
+<!-- - Versión larga (Incluye metodología, y todas las gráficas): Ver [Larga](#foo). -->
 
-- Versión corta (hallazgos más interesantes): Ver [Corta](#corta).
-
-
-## Resumen {#corta data-transition-speed="fast"}
+<!-- - Versión corta (hallazgos más interesantes): Ver [Corta](#corta). -->
 
 
+<!-- ## Resumen {#corta data-transition-speed="fast"} -->
 
 
-## Metodología {#foo data-transition-speed="fast"}
+
+
+## Metodología {data-transition-speed="fast"}
 
 - Datos crudos obtenidos del ICFES, alineados 2009-2019. 
 
