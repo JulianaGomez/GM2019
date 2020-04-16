@@ -2,9 +2,9 @@
 title: "Caracterización Académica y Cualitativa"
 subtitle: "Gimnasio Moderno: 2009-2019"
 author: "Éccole!"
-date:  "`r format(Sys.time(), '%d/%m/%Y')`"
-output:
-  revealjs::revealjs_presentation:
+date: "`r format(Sys.time(), '%d/%m/%Y')`"
+output: 
+ revealjs::revealjs_presentation:
     self_contained: false
     reveal_plugins: ["notes", "search"]
     theme: simple
@@ -13,7 +13,6 @@ output:
     reveal_options:
       minScale: 1.0
       maxScale: 1.0
-
 ---
 
 ```{r setup, include=FALSE}
@@ -62,7 +61,7 @@ colegiointeres <- 22848
 
 nombreninio <- nomninio <- nomcoleinteres <- "Gimnasio Moderno"
 
-
+gmmm <- c(22848,19513)
 
 
  locations <- c("~/Desktop/EccoleR/DataFrames/",
@@ -99,21 +98,45 @@ locations <- c("~/OneDrive/Éccole!/DATOS/ICFES/Saber 11 vs Saber Pro/",
 
 load("crucezscores.RData")
 
-load("~/OneDrive/Éccole! New and improved/Colegios/Trabajo/Moderno/Análisis cuantitativo 2019/Datos/crucegm2019.RData")
+
+locations <- c("~/OneDrive/Éccole! New and improved/Colegios/Trabajo/Moderno/Análisis cuantitativo 2019/Datos/",
+                 "C://Users/julit/OneDrive/Éccole! New and improved/Colegios/Trabajo/Moderno/Análisis cuantitativo 2019/Datos/",
+                 "C://Users/josem/OneDrive/Éccole! New and improved/Colegios/Trabajo/Moderno/Análisis cuantitativo 2019/Datos/"
+  )
+  
+  setwd(Find(dir.exists, locations))
+  
+  load("crucegm2019.RData")
+
+# load("~/OneDrive/Éccole! New and improved/Colegios/Trabajo/Moderno/Análisis cuantitativo 2019/Datos/crucegm2019.RData")
 
 
 Sys.setenv("plotly_username"="Julitwiga")
 Sys.setenv("plotly_api_key"="oBDpb5isfYwJYpdZIxdw")
 ```
 
-## Metodología
+## Organización de la presentación
+
+La presentación para podrán ver en dos versiones, de acuerdo al tiempo y a las necesidades que tengan. 
+
+- Versión larga (Incluye metodología, y todas las gráficas): Ver [Larga](#foo).
+
+- Versión corta (hallazgos más interesantes): Ver [Corta](#corta).
+
+
+## Resumen {#corta data-transition-speed="fast"}
+
+
+
+
+## Metodología {#foo data-transition-speed="fast"}
 
 - Datos crudos obtenidos del ICFES, alineados 2009-2019. 
 
 - Notas finales promoción 2019 obtenidos del Gimnasio Moderno.
 
 
-## Grupos de referencia
+## Grupos de referencia {data-transition-speed="fast"}
 
 - **Calendario A**: Colegio Anglo Americano, Colegio Nuevo Colombo Americano, Colegio San Patricio, Colegio Unidad Pedagógica,
 Colegio Clara Casas, Instituto Alberto Merani, Juan Ramón Jiménez.
@@ -122,9 +145,9 @@ Colegio Clara Casas, Instituto Alberto Merani, Juan Ramón Jiménez.
 - **Calendario B**: Colegio Anglo Colombiano , Colegio Los Nogales, Gimnasio Campestre, Gimnasio Femenino , Colegio Andino, Colegio Tilatá,
 Colegio Hacienda Los Alcaparros, Colegio Campoalegre, Colegio Santa Francisca Romana.
 
-## {data-background="saber359.jpg"}
+## {data-background="saber359.jpg"} 
 
-## Saber 3º,5º,9º 2012-2017
+## Saber 3º,5º,9º 2012-2017 {data-transition-speed="fast"}
 ```{r saber359,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 test <- sab359[is.element(sab359$Codigocolegio,lista),]
 
@@ -195,7 +218,7 @@ test <- sab359[is.element(sab359$Codigocolegio,lista),]
 
 
 ## {data-background="saber11.jpg"}
-## Gimnasio Moderno vs. Grupos de referencia - Promedio
+## Gimnasio Moderno vs. Grupos de referencia - Promedio {data-transition-speed="fast"}
 ```{r gruposref,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 codcolegiointeres<-colegiointeres
 
@@ -298,7 +321,7 @@ ggplotly(vsref)
 
 
 
-## GM vs.Top 10 calendario A - Ranking
+## GM vs.Top 10 calendario A - Ranking {data-transition-speed="fast"}
 ```{r top10,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 rankingseccole$Numeroestudiantes <- as.numeric(rankingseccole$Numeroestudiantes)
 
@@ -409,7 +432,7 @@ print(ggplot(data = transform(meltcomp,
 ```
 
 
-## Puntaje Global 2018
+## Puntaje Global 2018 {data-transition-speed="fast"}
 ```{r pglobal,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 compuestoscoles <- subset(pglobal, Codigocolegio%in%lista)
     puestos <- compuestoscoles[,c("Codigocolegio","Global","Anio","Type")]
@@ -456,7 +479,7 @@ compuestoscoles <- subset(pglobal, Codigocolegio%in%lista)
     </aside>
 
 
-## Percentiles 2010-2019
+## Percentiles 2010-2019 {data-transition-speed="fast"}
 ```{r percentiles,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "left", cache=TRUE,fig.width=15}
 compuestoscoles <- subset(percentileccole, Codigocolegio%in%lista)
     puestos<-compuestoscoles[,c("Codigocolegio","Anio", "Indiptil")]
@@ -522,7 +545,7 @@ compuestoscoles <- subset(percentileccole, Codigocolegio%in%lista)
           - 100 por ciento por encima del percentil 50
     </aside>
 
-## Calendario A - puesto promedio
+## Calendario A - puesto promedio {data-transition-speed="fast"}
 ```{r saber11promcala, echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("Ranking","Año","Nomlabel","Calendario")]
 
@@ -606,7 +629,7 @@ ggplotly(promcala)
 
 
 
-## Calendario A - puesto inglés
+## Calendario A - puesto inglés {data-transition-speed="fast"}
 ```{r saber11ingcala, echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RIngl","Año","Nomlabel","Calendario")]
 
@@ -684,7 +707,7 @@ ggplotly(inga)
     </aside>
 
 
-## Calendario A - puesto lectura crítica
+## Calendario A - puesto lectura crítica {data-transition-speed="fast"}
 ```{r saber11lccala,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RLcri","Año","Nomlabel","Calendario")]
 
@@ -762,7 +785,7 @@ ggplotly(lecta)
           - Mejor ranking histórico
     </aside>
 
-## Calendario A - puesto matemáticas
+## Calendario A - puesto matemáticas {data-transition-speed="fast"}
 ```{r saber11matecala,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RMate","Año","Nomlabel","Calendario")]
 
@@ -839,7 +862,7 @@ ggplotly(matea)
           - Mejor ranking histórico
     </aside>
 
-## Calendario A - puesto ciencias
+## Calendario A - puesto ciencias {data-transition-speed="fast"}
 ```{r saber11ciencala,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RCnat","Año","Nomlabel","Calendario")]
 
@@ -916,7 +939,7 @@ ggplotly(ciencia)
     </aside>
 
 
-## Calendario A - puesto sociales
+## Calendario A - puesto sociales {data-transition-speed="fast"}
 ```{r saber11socicala,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calamod,c("RSoci","Año","Nomlabel","Calendario")]
 
@@ -996,11 +1019,58 @@ ggplotly(socicala)
     </aside>
 
 
-## **CALENDARIO B**
+## **CALENDARIO B** {data-transition-speed="fast"}
 
-Dado que las pruebas de calendario A y B son diferentes, y por lo tanto, están en "rankings" diferentes, se comparará al Gimnasio Moderno contra los colegios de calendario B de acuerdo a su promedio en las pruebas. 
+Dado que las pruebas de calendario A y B son diferentes, y por lo tanto, están en "rankings" diferentes, se comparará al Gimnasio Moderno contra los colegios de calendario B de acuerdo a su promedio en las pruebas. Sin embargo, se hizo una proyección del puesto que habría obtenido en calendario B, de acuerdo al promedio obtenido. 
 
-## Calendario B - promedio
+## Calendario B - puesto proyectado del GM {data-transition-speed="fast"}
+```{r puestogmb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+calb2019 <- rankingscompletosB[rankingscompletosB$Anio==2019,]
+gm <- rankingscompletosA[rankingscompletosA$Codigocolegio==22848,]
+gm2019 <- gm[gm$Anio==2019,]
+gm2019 <- gm2019[complete.cases(gm2019),]
+
+
+# names(gm2019)
+calb2019$Codigodane <- NULL
+
+calb2019 <- rbind(calb2019,gm2019)
+mini <- calb2019[,c("Codigocolegio","Nombre","Promediocon")]
+mini <- mini[complete.cases(mini),]
+mini$Ranking <- rank(-mini$Promediocon, na.last = TRUE,
+                     ties.method = "last")
+
+miniref <- mini[mini$Codigocolegio%in%lista,]
+mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
+
+miniref <- merge(miniref,mininom,by="Codigocolegio")
+
+miniref$Grupo <- ifelse(miniref$Codigocolegio==22848,1,2)
+miniref$Grupo <- as.factor(miniref$Grupo)
+
+grafrank <- ggplot(miniref, aes(reorder(Nomlabel,Ranking),  Ranking,fill=Grupo)) +
+      geom_bar(stat = "identity") +
+      ylab("Puesto 2019 entre calendario B")+
+      xlab("Colegio")+
+      theme_bw()+
+      scale_y_reverse()+
+      scale_fill_manual(values=wes_palette(n=5, name="Darjeeling1"))+
+      theme(legend.position="none",
+            title=element_text(face = "bold"),
+            legend.text=element_text(size=12, face="plain"),
+            legend.title=element_text(size=12, face="bold"),
+            axis.title.y=element_text(size=12, face="bold" ),
+            axis.text.x=element_text(angle=90,vjust=0.7,face="bold", size=12))+
+      theme(axis.title.x=element_text(size=12, face="bold"))+
+      theme(axis.text.y=element_text(size=12, face="bold"))+
+      theme(strip.text.x = element_text(size = 12))
+    
+    
+   ggplotly(grafrank)
+
+```
+
+## Calendario B - promedio {data-transition-speed="fast"}
 ```{r saber11promcalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Promediocon","Año","Nomlabel","Calendario")]
 
@@ -1086,7 +1156,7 @@ ggplotly(promb)
     </aside>
 
 
-## Calendario B - promedio inglés
+## Calendario B - promedio inglés {data-transition-speed="fast"}
 ```{r saber11ingcalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Ingles","Año","Nomlabel","Calendario")]
 
@@ -1173,7 +1243,7 @@ ggplotly(calbing)
     </aside>
 
 
-## Calendario B - promedio lectura crítica
+## Calendario B - promedio lectura crítica {data-transition-speed="fast"}
 ```{r saber11lccalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Lecturacritica","Año","Nomlabel","Calendario")]
 
@@ -1259,7 +1329,7 @@ ggplotly(lccala)
     </aside>
 
 
-## Calendario B - promedio matemáticas
+## Calendario B - promedio matemáticas {data-transition-speed="fast"}
 ```{r saber11matecalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Matematicas","Año","Nomlabel","Calendario")]
 
@@ -1342,7 +1412,7 @@ ggplotly(calbmate)
          
     </aside>
 
-## Calendario B - promedio ciencias naturales
+## Calendario B - promedio ciencias naturales {data-transition-speed="fast"}
 ```{r saber11ciencalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Cienciasnaturales","Año","Nomlabel","Calendario")]
 
@@ -1426,7 +1496,7 @@ ggplotly(calbcien)
          
     </aside>
 
-## Calendario B - promedio sociales
+## Calendario B - promedio sociales {data-transition-speed="fast"}
 ```{r saber11socicalb,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 comprankings <- rankingseccole[rankingseccole$Codigocolegio%in%calbmod,c("Sociales","Año","Nomlabel","Calendario")]
 
@@ -1518,7 +1588,7 @@ ggplotly(calbsoci)
 ## {data-background="saberpro.jpg"}
 
 
-## Saber Pro Lenguaje 
+## Saber Pro Lenguaje  {data-transition-speed="fast"}
 ```{r sbproleng,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 prolista <- zpro11a18[zpro11a18$Codigocolegio%in%lista,c("Codigocolegio","ZLcritpro","ZRcuantpro","ZIngpro")]
 mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
@@ -1581,7 +1651,7 @@ ggplotly(sbproleng)
 
 
 
-## Saber Pro Razonamiento Cuantitativo 
+## Saber Pro Razonamiento Cuantitativo  {data-transition-speed="fast"}
 ```{r sbprocuant,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 prolista <- zpro11a18[zpro11a18$Codigocolegio%in%lista,c("Codigocolegio","ZLcritpro","ZRcuantpro","ZIngpro")]
 mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
@@ -1647,7 +1717,7 @@ ggplotly(sbprocuant)
     </aside>
 
 
-## Saber Pro Inglés 
+## Saber Pro Inglés  {data-transition-speed="fast"}
 ```{r sbproing,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 prolista <- zpro11a18[zpro11a18$Codigocolegio%in%lista,c("Codigocolegio","ZLcritpro","ZRcuantpro","ZIngpro")]
 mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
@@ -1703,7 +1773,7 @@ ggplotly(sbproing)
          
     </aside>
 
-##Egresados de carreras, 2011-2018
+##Egresados de carreras, 2011-2018 {data-transition-speed="fast"}
 ```{r carreras,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 area <-  c("Bellasartes","Cieneducacion","Socihumanidades",
            "Agrovet","Ciensalud","Econadminis",
@@ -1807,7 +1877,7 @@ ggplotly(plotcarr)%>%
     </aside>
 
 
-##Egresados de universidades, 2011-2018
+##Egresados de universidades, 2011-2018 {data-transition-speed="fast"}
 ```{r universidades,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 univ <- c("Andes","Javeriana","Sabana","Rosario","Nacional","Tadeo","Politécnico","Externado","El Bosque","EAFIT","S. Arboleda","Santo Tomás","Militar","La Salle","Bolivariana",
           "EAN" ,"CESA","Uniminuto","Piloto","Libertadores","América","Esc. Ingeniería","Católica","Libre","Central","Otras")
@@ -1907,7 +1977,7 @@ ggplotly(uniplot)
          
     </aside>
 
-##Egresados de carreras, por universidad, 2011-2018
+##Egresados de carreras, por universidad, 2011-2018 {data-transition-speed="fast"}
 ```{r carruniv,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 area <-  names(carrunivwide)[8:325]
 labelsarea <-   names(carrunivwide)[8:325]
@@ -1996,19 +2066,16 @@ ggplotly(plotcu)
     </aside>
     
 ## {data-background="saber11vsinternas.jpg"}
-## Correlación notas internas inglés - Inglés Saber 11
+## Correlación notas internas inglés - Inglés Saber 11 {data-transition-speed="fast"}
 ```{r ingles,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 soloing <- crucegm2019[crucegm2019$Francoing=="Inglés",c("SB11Ingles","Inglés","Curso","Grupoinglés","Estudiante")]
 
-
-
-
-soloingplot <- ggplot(soloing, aes(x=Inglés, y=SB11Ingles,color=Curso,label=Estudiante))+
-  facet_wrap(~Curso)+
+soloingplot <- ggplot(soloing, aes(x=Inglés, y=SB11Ingles,label=Estudiante))+
+  # facet_wrap(~Curso)+
   geom_point()+
   theme_bw()+
   geom_smooth(method=lm)+
-  labs(x="Notas finales inglés estandarizadas",y="Notas inglés SB 11 estandarizadas")+
+  labs(x="Notas finales inglés",y="Notas inglés SB 11")+
   scale_color_brewer(palette = "Paired")+
   # stat_summary(fun.data = give.n, geom = "text", fun.y = median, color="black", size=4,
   #                                     position = position_dodge(width = 1)) +
@@ -2027,7 +2094,7 @@ ggplotly(soloingplot)
 
 ```
 
-## Correlación notas internas español - Lectura Crítica Saber 11
+## Correlación notas internas español - Lectura Crítica Saber 11 {data-transition-speed="fast"}
 ```{r español,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 espplotly <- ggplot(crucegm2019, aes(x=Español, y=SB11Lcrit,color=Curso,label=Estudiante))+
   facet_wrap(~Curso)+
@@ -2052,7 +2119,7 @@ ggplotly(espplotly)
 
 ```
       
-## Correlación notas internas Lectura Crítica 1 - Lectura Crítica Saber 11
+## Correlación notas internas Lectura Crítica 1 - Lectura Crítica Saber 11 {data-transition-speed="fast"}
 ```{r lc1,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 nodifs <- c("11A1","11A2","11B1","11B3","11C1")
 grupolcgrande <- crucegm2019[crucegm2019$GrupoLC1%in%nodifs,c("Curso","LCI","GrupoLC1","SB11Lcrit","Estudiante")]
@@ -2093,7 +2160,7 @@ ggplotly(lc1plot)
 
 ```
             
-## Correlación notas internas Lectura Crítica 2 - Lectura Crítica Saber 11
+## Correlación notas internas Lectura Crítica 2 - Lectura Crítica Saber 11 {data-transition-speed="fast"}
 ```{r lc2,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 LC2C1 <- crucegm2019[crucegm2019$GrupoLCII=="11C1",c("Curso","LCII","SB11Lcrit","Estudiante")]
 LC2mayoria <- crucegm2019[crucegm2019$GrupoLCII!="11C1",c("Curso","LCII","SB11Lcrit","Estudiante")]
@@ -2126,7 +2193,7 @@ ggplotly(lc2plot)
 
 ```
    
-## Correlación notas internas Filosofía - Lectura Crítica Saber 11
+## Correlación notas internas Filosofía - Lectura Crítica Saber 11 {data-transition-speed="fast"}
 ```{r filosofia,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 filoplot <- ggplot(crucegm2019, aes(x=Filosofía, y=SB11Lcrit,color=Curso,label=Estudiante))+
   facet_wrap(~Curso)+
@@ -2152,7 +2219,7 @@ ggplotly(filoplot)
 ```
       
       
-## Correlación notas internas Sociales - Sociales Saber 11
+## Correlación notas internas Sociales - Sociales Saber 11 {data-transition-speed="fast"}
 ```{r sociales,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 sociplot <- ggplot(crucegm2019, aes(x=Sociales, y=SB11Soci,color=Curso,label=Estudiante))+
   facet_wrap(~Curso)+
@@ -2177,7 +2244,7 @@ ggplotly(sociplot)
 
 ```
             
-## Correlación notas internas Física - Ciencias Naturales Saber 11
+## Correlación notas internas Física - Ciencias Naturales Saber 11 {data-transition-speed="fast"}
 ```{r física,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 fisi11b1 <- crucegm2019[crucegm2019$Grupofisica=="11B1",c("Curso","Física","SB11Cnat","Estudiante")]
 fisi11b1$Curso <- "11B - 1"
@@ -2209,7 +2276,7 @@ ggplotly(fisiplot)
 ```
 
 
-## Correlación notas internas Química - Ciencias Naturales Saber 11
+## Correlación notas internas Química - Ciencias Naturales Saber 11 {data-transition-speed="fast"}
 ```{r química,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 quimiplot <- ggplot(crucegm2019, aes(x=Química, y=SB11Cnat,color=Curso,label=Estudiante))+
   facet_wrap(~Curso)+
@@ -2234,7 +2301,7 @@ ggplotly(quimiplot)
 
 ```
 
-## Correlación notas internas Biología - Ciencias Naturales Saber 11
+## Correlación notas internas Biología - Ciencias Naturales Saber 11 {data-transition-speed="fast"}
 ```{r biología,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 bioplot <- ggplot(crucegm2019, aes(x=Biología, y=SB11Cnat,color=Curso,label=Estudiante))+
   facet_wrap(~Curso)+
@@ -2259,7 +2326,7 @@ ggplotly(bioplot)
 
 ```
 
-## Correlación notas internas Cálculo - Matemáticas Saber 11
+## Correlación notas internas Cálculo - Matemáticas Saber 11 {data-transition-speed="fast"}
 ```{r matemáticas,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
 mateplot <- ggplot(crucegm2019, aes(x=Cálculo, y=SB11Mate,color=Curso,label=Estudiante))+
   facet_wrap(~Curso)+
@@ -2300,6 +2367,8 @@ ggplotly(mateplot)
 
 - Correlaciones por encima de lo esperado en mayoría de materias
 
+- Mayor correlación: química - ciencias naturales Saber 11.
+
 
 ## OPORTUNIDADES DE MEJORA
 
@@ -2307,8 +2376,203 @@ ggplotly(mateplot)
 
 - L. crítica más diferencia con top 10. 
 
-- Saber Pro: razomamiento cuantitativo por debajo del promdio.
+- Saber Pro: razonamiento cuantitativo por debajo del promedio.
 
 - Notas internas: diferencias entre cursos.
 
 - Correlaciones por debajo de lo esperado: lc2, biología
+
+- Menor correlación: lc2 - lectura crítica Saber 11.
+
+## Acceso directo Andes 2020-2
+
+- Promedio del puntaje global 2017-2019 - 1.25 desviaciones estándar >= 310
+
+- 61 colegios en 10 ciudades
+
+- 310: puntaje mínimo 2020-1
+
+## ¿Por qué las del Marymount recibieron cartas de los Andes? {data-transition-speed="fast"}
+```{r gmmm,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+moderno18 <- subset(pglobal, Codigocolegio==22848)
+moderno18 <- subset(moderno18, Anio==2018)
+mm19 <- subset(pglobal, Codigocolegio==19513)
+mm19 <- subset(mm19, Anio==2019)
+
+
+compuestoscoles <- rbind(moderno18,mm19)
+    puestos <- compuestoscoles[,c("Codigocolegio","Global","Anio","Type")]
+    mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
+
+    puestos <- merge(puestos,mininom, by="Codigocolegio")
+    puestos$Global <- as.numeric(puestos$Global)
+
+
+    df <- puestos
+    df$Type <- ordered(df$Type, levels = c("cadetblue1", "seagreen3", "orange"))
+    df$Type <- revalue(df$Type,c("cadetblue1"="MADE", "seagreen3"="Otras", "orange"="Ninguna"))
+    # wrap nombres
+    # df$Nombreest <- str_wrap(df$Nombreest, width = 10)
+
+    # anios <- c(2019)
+    names(df) <- c("Codigocolegio", "Global","Anio","Carrera","Colegio")
+
+
+    df$Colegio <- as.factor(df$Colegio)
+    
+    # # ordenar Nomlabel para que Pachas quede primero
+    # df$Colegio <- as.factor(df$Colegio)
+    # df$Colegio <- ordered(df$Colegio,
+    #                         levels = c("Gimnasio Moderno","Instituto Alberto Merani","Nuevo Colombo Americano","Anglo Americano",
+    #                                        "Juan Ramón Jiménez","San Patricio","Clara Casas","Unidad Pedagógica",
+    #                                      "Gimnasio Femenino","Los Nogales","Santa Francisca Romana","Campoalegre",
+    #                                      "Tilatá","Los Alcaparros","Gimnasio Campestre","Anglo Colombiano", "Andino"))
+    
+    
+    plot_ly(data = df, x = ~Colegio, y = ~Global,color = ~Carrera,type="scatter", marker = list(size = 10,alpha=0.5))%>% layout(hovermode = 'closest')
+
+```
+
+
+## Acceso directo: Promedio Puntaje Global 2012-2019 {data-transition-speed="fast"}
+```{r andes2020pg,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+finalandes20202 <- finalandes20202[complete.cases(finalandes20202),]
+
+adentro <- ggplot(finalandes20202, aes(x=punt_global, fill=Corte)) +
+           geom_histogram()+
+           geom_vline(xintercept=343)+
+           geom_text(aes(x=310, label="Moderno en \n cola izquierda", y=500), colour="black",text=element_text(size=11)) +
+           labs(x="Puntaje Global promedio de los últimos tres años", y = "Número de colegios")
+
+
+ggplotly(adentro)
+
+
+```
+
+
+
+## Acceso directo: Desviación estándadar {data-transition-speed="fast"}
+```{r andes2020sd,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+finalandes20202 <- finalandes20202[complete.cases(finalandes20202),]
+
+adentro <- ggplot(finalandes20202, aes(x=SD, fill=Corte)) +
+           geom_histogram()+
+           geom_vline(xintercept=30.6)+
+           geom_text(aes(x=40, label="Moderno en \n cola derecha", y=500), colour="black",text=element_text(size=11)) +
+           labs(x="Desviación estándar promedio de los últimos tres años", y = "Número de colegios")
+
+
+ggplotly(adentro)
+
+
+```
+
+
+## Gimnasio Moderno no clasifica
+
+- Quedó en la cola izquierda del promedio
+
+- Quedó en la cola derecha de la desviación estándar
+
+
+
+## Acceso directo: fórmula completa {data-transition-speed="fast"}
+```{r andes2020calculo,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+finalandes20202 <- finalandes20202[complete.cases(finalandes20202),]
+
+adentro <- ggplot(finalandes20202, aes(x=Calculo, fill=Corte)) +
+           geom_histogram()+
+           geom_vline(xintercept=305)+
+           geom_text(aes(x=270, label="Moderno en \n cola izquierda", y=500), colour="black",text=element_text(size=11)) +
+           labs(x="Promedio puntaje global últimos tres años - 1.25 sd >= 310", y = "Número de colegios")
+
+
+ggplotly(adentro)
+
+
+```
+
+
+
+## Ranking no es buen predictor de acceso directo {data-transition-speed="fast"}
+```{r andes2020,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+directoandes <- finalandes20202[finalandes20202$Corte=="si",]
+
+ranka19 <- subset(rankingscompletosA,Anio==2019)
+rankb19 <- subset(rankingscompletosB,Anio==2019)
+rankb19$Codigodane <- NULL
+
+rank19 <- rbind(ranka19,rankb19)
+
+rankdirectos <- rank19[rank19$Codigocolegio%in%directoandes$Codigocolegio,c("Codigocolegio","Ranking")]
+
+
+directoandes <- merge(directoandes,rankdirectos,by="Codigocolegio")
+directoandes$Label <- paste(directoandes$Nombreest,"-",directoandes$Colemcpio)
+
+point <- ggplot(directoandes,aes(x=Ranking,y=Calculo, fill=Calendario,label=Label))+
+  facet_wrap(~Calendario)+
+  labs(x="Ranking 2019 por calendario", y="Promedio PG 2017-2019 - 1.25 sd")+
+  geom_smooth()+
+  geom_point() 
+
+ggplotly(point)
+
+
+
+```
+
+
+
+
+
+## Estrategia: no tener estudiantes con Puntajes Globales por debajo de 300 {data-transition-speed="fast"}
+```{r andes2020ref,echo = TRUE, message = FALSE, echo = FALSE, warning=FALSE,fig.align = "center", cache=TRUE,fig.width=10}
+andesref <- finalandes20202[finalandes20202$Codigocolegio%in%lista,]
+andesref <- andesref[,c("Codigocolegio","Corte")]
+
+compuestoscoles <- subset(pglobal, Codigocolegio%in%lista)
+    puestos <- compuestoscoles[,c("Codigocolegio","Global","Anio","Type")]
+    mininom <- crucecodigos[,c("Codigocolegio","Nomlabel")]
+
+    puestos <- merge(puestos,mininom, by="Codigocolegio")
+    puestos$Global <- as.numeric(puestos$Global)
+
+
+    df <- puestos
+    
+    anios <- c(2018)
+    df <- df[df$Anio%in%anios,]
+    names(df) <- c("Codigocolegio", "Global","Anio","Carrera","Colegio")
+
+
+    df$Colegio <- as.factor(df$Colegio)
+    
+    # ordenar Nomlabel para que Pachas quede primero
+    df$Colegio <- as.factor(df$Colegio)
+    df$Colegio <- ordered(df$Colegio,
+                            levels = c("Gimnasio Moderno","Juan Ramón Jiménez","Clara Casas","Unidad Pedagógica","Anglo Colombiano", "Andino",
+                                       "Instituto Alberto Merani","Nuevo Colombo Americano","Anglo Americano","San Patricio",
+                                         "Gimnasio Femenino","Los Nogales","Santa Francisca Romana","Campoalegre",
+                                         "Tilatá","Los Alcaparros","Gimnasio Campestre"))
+    
+    df <- merge(df,andesref,by="Codigocolegio")
+    
+    
+    plot_ly(data = df, x = ~Colegio, y = ~Global,color = ~Corte,type="scatter", marker = list(size = 10,alpha=0.5))%>%
+      layout(hovermode = 'closest')
+
+
+```
+
+
+## Conclusión {data-transition-speed="fast"}
+
+- Si se repitiera el proceso de acceso directo en el segundo semestre, GM no clasificaría al corte
+
+- No tener estudiantes con p. g. < 300 reduce desviación y sube promedio
+
+- Recoger información sobre esos estudiantes para hayar causas y tomar decisiones
+
+- Para acceso directo, apuntarle a CIE
